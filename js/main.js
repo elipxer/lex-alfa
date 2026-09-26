@@ -1,21 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Navegação entre abas
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-      document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
-    });
-  });
-
-  // Indica modo de teste local (sem Premiere)
-  if (PremiereBridge.isMock) {
-    document.getElementById("devBadge").style.display = "inline-block";
+document.addEventListener('DOMContentLoaded', async () => {
+  App.bindPreferences();
+  const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+  function select(id) {
+    tabButtons.forEach(btn => { const active = btn.dataset.tab === id; btn.classList.toggle('active', active); btn.setAttribute('aria-selected', String(active)); });
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === `tab-${id}`));
+    App.save('activeTab', id);
   }
-
-  RespirosTab.init();
-  VolumeTab.init();
-  LegendasTab.init();
-  SfxTab.init();
+  tabButtons.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.tab)));
+  const lastTab = App.load('activeTab', 'biblioteca');
+  select(tabButtons.some(b => b.dataset.tab === lastTab) ? lastTab : 'biblioteca');
+  App.$('devBadge').textContent = PremiereBridge.isPremiere ? 'Premiere conectado' : 'Prévia no navegador · sem edição';
+  App.$('devBadge').style.display = 'inline-block';
+  App.$('chooseSource').addEventListener('click', () => App.run('appStatus', async () => {
+    const source = await PremiereBridge.chooseFile(); if (source) App.setSource(source);
+  }));
+  App.$('selectedSource').addEventListener('click', () => App.run('appStatus', async () => App.setSource(await PremiereBridge.selectedSource())));
+  App.$('checkProcessor').addEventListener('click', () => App.run('processorStatus', Processor.check));
+  App.$('cancelProcessing').addEventListener('click', () => Processor.cancel().catch(e => App.message('processorStatus', e.message, true)));
+  [RespirosTab, VolumeTab, LegendasTab, CaptionTools, SfxTab].forEach(tab => {
+    try { tab.init(); } catch (e) { App.message('appStatus', `Erro ao iniciar painel: ${e.message}`, true); }
+  });
+  Processor.restoreOutputs();
+  await MediaLibrary.init();
 });

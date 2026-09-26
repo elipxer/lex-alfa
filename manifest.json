@@ -1,18 +1,18 @@
 {
   "id": "com.lexalfa.panel",
   "name": "Lex Alfa",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "main": "index.html",
   "manifestVersion": 6,
   "requiredPermissions": {
     "network": {
-      "domains": "none"
+      "domains": ["http://127.0.0.1:47831"]
     },
-    "clipboard": "read",
     "localFileSystem": "fullAccess"
   },
   "icons": [
-    { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1, 2], "theme": ["darkest", "dark", "medium", "lightest", "light", "all"] }
+    { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1], "theme": ["all"] },
+    { "width": 23, "height": 23, "path": "icons/icon@2x.png", "scale": [2], "theme": ["all"] }
   ],
   "host": [
     {
@@ -27,7 +27,8 @@
       "label": { "default": "Lex Alfa" },
       "main": "index.html",
       "icons": [
-        { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1, 2], "theme": ["darkest", "dark", "medium", "lightest", "light", "all"] }
+        { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1], "theme": ["all"] },
+        { "width": 23, "height": 23, "path": "icons/icon@2x.png", "scale": [2], "theme": ["all"] }
       ],
       "minimumSize": { "width": 340, "height": 500 },
       "maximumSize": { "width": 900, "height": 1600 },

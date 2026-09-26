@@ -38,7 +38,10 @@ const PremiereBridge = (() => {
       try { child = ppro.FolderItem.cast(item); } catch (_) { child = null; }
       if (child) { const found = await findMedia(child, path); if (found) return found; continue; }
       try { clip = ppro.ClipProjectItem.cast(item); } catch (_) { clip = null; }
-      if (clip && pathKey(await clip.getMediaFilePath()) === pathKey(path)) return item;
+      if (clip) {
+        const mediaPath = await clip.getMediaFilePath();
+        if (typeof mediaPath === 'string' && pathKey(mediaPath) === pathKey(path)) return item;
+      }
     }
     return null;
   }
@@ -67,10 +70,22 @@ const PremiereBridge = (() => {
   }
   async function preview(path) {
     requireHost();
-    if (!await ppro.SourceMonitor.openFilePath(path)) throw new Error('Não foi possível abrir o áudio no monitor de origem.');
-    if (!await ppro.SourceMonitor.play(1)) throw new Error('Áudio aberto no monitor de origem; pressione Play para ouvir.');
+    if (!await ppro.SourceMonitor.openFilePath(path)) throw new Error('Não foi possível abrir o arquivo no monitor de origem.');
+    if (/\.(png|jpe?g|webp)$/i.test(path)) return;
+    if (!await ppro.SourceMonitor.play(1)) throw new Error('Arquivo aberto no monitor de origem; pressione Play para reproduzir.');
   }
   async function stopPreview() { if (ppro) await ppro.SourceMonitor.play(0); }
+  async function applyMogrt(path) {
+    if (typeof path !== 'string' || !/\.mogrt$/i.test(path)) throw new Error('Escolha um arquivo .mogrt disponível no computador.');
+    const {sequence} = await context();
+    const position = await sequence.getPlayerPosition();
+    const videoTrack = await sequence.getVideoTrackCount(), audioTrack = await sequence.getAudioTrackCount();
+    const current = await context();
+    if (current.sequence.guid.toString() !== sequence.guid.toString()) throw new Error('A sequência mudou. Tente novamente.');
+    const items = await ppro.SequenceEditor.getEditor(sequence).insertMogrtFromPath(path, position, videoTrack, audioTrack);
+    if (!items || !items.length) throw new Error('O Premiere não aplicou o MOGRT. Verifique compatibilidade, fontes e dependências do template.');
+    return {track:videoTrack + 1, seconds:position.seconds};
+  }
   async function chooseFile(types = ['wav','mp3','m4a','flac','aif','aiff','aac','ogg','mp4','mov','mkv']) {
     if (!fs) throw new Error('Abra o plugin no Premiere para selecionar um arquivo para processamento.');
     const entry = await fs.getFileForOpening({types});
@@ -103,5 +118,18 @@ const PremiereBridge = (() => {
     }
     return file.nativePath;
   }
-  return {isMock:!ppro, isPremiere:!!ppro, fs, context, getActiveSequence, importMedia, insertAudio, preview, stopPreview, chooseFile, selectedSource, bundledSfx};
+  async function bundledOverlayFolder() {
+    if(!fs)throw new Error('Abra o painel no Premiere.');
+    const data=await fs.getDataFolder();let folder;
+    try{folder=await data.getEntry('overlays');}catch(_){folder=await data.createFolder('overlays');}
+    const plugin=await fs.getPluginFolder();
+    for(const name of ['grao','vinheta','luz-quente','linhas']) {
+      try{await folder.getEntry(name+'.png');}catch(_){
+        const source=await plugin.getEntry(`assets/overlays/${name}.png`),target=await folder.createFile(name+'.png',{overwrite:false});
+        await target.write(await source.read({format:uxp.storage.formats.binary}),{format:uxp.storage.formats.binary});
+      }
+    }
+    return folder;
+  }
+  return {isMock:!ppro, isPremiere:!!ppro, fs, context, getActiveSequence, importMedia, insertAudio, applyMogrt, preview, stopPreview, chooseFile, selectedSource, bundledSfx, bundledOverlayFolder};
 })();

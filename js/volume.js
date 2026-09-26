@@ -1,26 +1,15 @@
 const VolumeTab = (() => {
   function init() {
-    const alvo = document.getElementById("volumeAlvo");
-    const alvoOut = document.getElementById("volumeAlvoOut");
-    const lim = document.getElementById("volumeLimitador");
-    const limOut = document.getElementById("volumeLimitadorOut");
-
-    alvo.addEventListener("input", () => (alvoOut.textContent = `${alvo.value} LUFS`));
-    lim.addEventListener("input", () => (limOut.textContent = `${lim.value} dB`));
-
-    document.getElementById("btnAplicarVolume").addEventListener("click", aplicar);
+    const update = () => {
+      App.$('volumeAlvoOut').textContent = `${App.$('volumeAlvo').value} LUFS`;
+      App.$('volumeLimitadorOut').textContent = `${App.$('volumeLimitador').value} dBTP`;
+    };
+    ['volumeAlvo','volumeLimitador'].forEach(id => App.$(id).addEventListener('input', update)); update();
+    App.$('btnAplicarVolume').addEventListener('click', () => App.run('volumeStatus', async () => {
+      const result = await Processor.run('normalize', {path:App.getSource().path,
+        targetLufs:App.number('volumeAlvo',-30,-6), limiterDb:App.number('volumeLimitador',-6,0)}, 'volumeStatus');
+      await Processor.publish(result, 'volumeStatus');
+    }));
   }
-
-  async function aplicar() {
-    const status = document.getElementById("volumeStatus");
-    status.textContent = "Nivelando áudio...";
-    const targetLufs = Number(document.getElementById("volumeAlvo").value);
-    const limiterDb = Number(document.getElementById("volumeLimitador").value);
-    const autoNivelar = document.getElementById("volumeAutoNivelar").checked;
-
-    const res = await PremiereBridge.normalizeAudio({ targetLufs, limiterDb, autoNivelar });
-    status.textContent = `Volume nivelado (${res.targetLufs} LUFS, limitador ${res.limiterDb} dB) em ${res.aplicadoEm}.`;
-  }
-
-  return { init };
+  return {init};
 })();

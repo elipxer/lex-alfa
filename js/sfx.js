@@ -1,42 +1,15 @@
 const SfxTab = (() => {
-  const SONS = [
-    { id: "clique", nome: "Clique" },
-    { id: "whoosh", nome: "Whoosh" },
-    { id: "pop", nome: "Pop" },
-    { id: "ding", nome: "Ding" },
-    { id: "impacto", nome: "Impacto" }
-  ];
-
   function init() {
-    const list = document.getElementById("sfxList");
-    list.innerHTML = "";
-    SONS.forEach((s) => {
-      const item = document.createElement("div");
-      item.className = "sfx-item";
-      item.innerHTML = `
-        <span>${s.nome}</span>
-        <span>
-          <button data-action="preview" data-id="${s.id}">Ouvir</button>
-          <button data-action="inserir" data-id="${s.id}">Inserir no playhead</button>
-        </span>
-      `;
-      list.appendChild(item);
+    const list = App.$('sfxList'); list.textContent = '';
+    [['clique','Clique'],['whoosh','Whoosh'],['pop','Pop'],['ding','Ding'],['impacto','Impacto']].forEach(([id,name]) => {
+      const row = App.element('div', undefined, 'sfx-item'); row.appendChild(App.element('span', name));
+      const actions = App.element('div', undefined, 'actions');
+      [['Ouvir', async () => { await MediaLibrary.play({path:await PremiereBridge.bundledSfx(id),name}); App.message('sfxStatus', `Prévia: ${name}.`); }],
+       ['Adicionar em nova faixa', async () => { const result = await PremiereBridge.insertAudio(await PremiereBridge.bundledSfx(id)); App.message('sfxStatus', `${name} adicionado na faixa A${result.track}.`); }]
+      ].forEach(([label,fn]) => { const button = App.button(label, () => App.run('sfxStatus', fn)); button.setAttribute('data-operation',''); actions.appendChild(button); });
+      row.appendChild(actions); list.appendChild(row);
     });
-
-    list.addEventListener("click", async (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-      const id = btn.dataset.id;
-      const status = document.getElementById("sfxStatus");
-      if (btn.dataset.action === "preview") {
-        await PremiereBridge.playPreview(id);
-      } else {
-        status.textContent = "Inserindo...";
-        await PremiereBridge.insertSfxAtPlayhead(id);
-        status.textContent = `"${id}" inserido no playhead da timeline.`;
-      }
-    });
+    App.$('stopSfx').addEventListener('click', () => MediaLibrary.stop().catch(e => App.message('sfxStatus', e.message, true)));
   }
-
-  return { init };
+  return {init};
 })();

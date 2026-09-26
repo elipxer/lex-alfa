@@ -44,7 +44,15 @@ const Processor = (() => {
   }
   async function cancel() { if (activeJob) await request(`/jobs/${activeJob}/cancel`, {}); }
   async function publish(result, statusId) {
-    const files = result.files || [], out = App.$('outputFiles'); out.textContent = '';
+    const files = result.files || [];
+    const previous = App.load('outputs', []);
+    const allFiles = Array.from(new Set([...files, ...(Array.isArray(previous) ? previous : [])])).slice(0, 20);
+    App.save('outputs', allFiles); renderOutputs(allFiles);
+    App.message(statusId, result.message || `${files.length} arquivo(s) gerado(s). Use Importar no projeto abaixo.`);
+  }
+  function renderOutputs(files) {
+    const out = App.$('outputFiles'); out.textContent = '';
+    if (files.length) out.appendChild(App.element('p', 'Resultados recentes', 'field-label'));
     files.forEach(path => {
       const row = App.element('div', undefined, 'output-row'); row.appendChild(App.element('span', path));
       const button = App.button('Importar no projeto', () => App.run('appStatus', async () => {
@@ -52,7 +60,10 @@ const Processor = (() => {
       }));
       button.setAttribute('data-operation', ''); row.appendChild(button); out.appendChild(row);
     });
-    App.message(statusId, result.message || `${files.length} arquivo(s) gerado(s). Use Importar no projeto abaixo.`);
   }
-  return {check, run, cancel, publish};
+  function restoreOutputs() {
+    const saved = App.load('outputs', []);
+    renderOutputs(Array.isArray(saved) ? saved.filter(p => typeof p === 'string').slice(0,20) : []);
+  }
+  return {check, run, cancel, publish, restoreOutputs};
 })();

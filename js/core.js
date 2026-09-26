@@ -17,7 +17,7 @@ const App = (() => {
   async function run(statusId, task) {
     if (busy) { message(statusId, 'Aguarde a operação em andamento.'); return; }
     busy = true;
-    const controls = Array.from(document.querySelectorAll('[data-operation]'));
+    const controls = Array.from(document.querySelectorAll('[data-operation], #tab-respiros input, #tab-volume input, #tab-legendas input, #tab-legendas textarea, #tab-legendas select, #tab-legendas .template-card, #saveCaptionPreset, #loadCaptionPreset, #manchMenos, #manchMais, #libraryRecursive'));
     const previous = controls.map(el => el.disabled);
     controls.forEach(el => { el.disabled = true; });
     try { return await task(); }
