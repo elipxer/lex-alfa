@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lex Alfa</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1>Lex Alfa</h1>
+      <span class="dev-badge" id="devBadge" style="display:none;">modo teste local</span>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="respiros">Respiros</button>
+      <button class="tab-btn" data-tab="volume">Volume</button>
+      <button class="tab-btn" data-tab="legendas">Legendas</button>
+      <button class="tab-btn" data-tab="sfx">SFX</button>
+    </nav>
+
+    <main class="tab-content">
+      <!-- ABA RESPIROS -->
+      <section id="tab-respiros" class="tab-pane active">
+        <p class="field-label">Sensibilidade de detecção</p>
+        <input type="range" id="respirosSensibilidade" min="0" max="100" value="55" />
+        <div class="row-between">
+          <span class="hint">Menos cortes</span>
+          <span class="hint">Mais cortes</span>
+        </div>
+
+        <p class="field-label">Duração mínima do respiro (ms)</p>
+        <input type="number" id="respirosDuracaoMin" value="150" min="30" max="2000" step="10" />
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="respirosPreservarFala" checked />
+          Preservar pausas dramáticas na fala
+        </label>
+
+        <button id="btnDetectarRespiros" class="btn-primary">Detectar respiros na timeline</button>
+        <button id="btnCortarRespiros" class="btn-secondary">Cortar respiros detectados</button>
+
+        <div id="respirosStatus" class="status-box"></div>
+      </section>
+
+      <!-- ABA VOLUME -->
+      <section id="tab-volume" class="tab-pane">
+        <p class="field-label">Volume alvo (LUFS)</p>
+        <input type="range" id="volumeAlvo" min="-30" max="-6" value="-16" />
+        <span id="volumeAlvoOut" class="value-out">-16 LUFS</span>
+
+        <p class="field-label">Limitador de pico (dB)</p>
+        <input type="range" id="volumeLimitador" min="-6" max="0" value="-1" />
+        <span id="volumeLimitadorOut" class="value-out">-1 dB</span>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="volumeAutoNivelar" checked />
+          Nivelar automaticamente clipes de áudio distintos
+        </label>
+
+        <button id="btnAplicarVolume" class="btn-primary">Aplicar nivelamento na sequência</button>
+        <div id="volumeStatus" class="status-box"></div>
+      </section>
+
+      <!-- ABA LEGENDAS -->
+      <section id="tab-legendas" class="tab-pane">
+        <p class="field-label">Template</p>
+        <div id="templateGrid" class="template-grid"></div>
+
+        <div class="divider"></div>
+
+        <p class="field-label">Personalizar</p>
+        <div class="row-between">
+          <label>Cor de destaque</label>
+          <input type="color" id="legendaCor" value="#EF9F27" />
+        </div>
+        <div class="row-between">
+          <label>Tamanho</label>
+          <input type="range" id="legendaTamanho" min="10" max="32" value="14" />
+          <span id="legendaTamanhoOut" class="value-out">14px</span>
+        </div>
+        <div class="row-between">
+          <label>Fonte</label>
+          <select id="legendaFonte">
+            <option value="Montserrat">Montserrat</option>
+            <option value="Arial">Arial</option>
+            <option value="Bebas Neue">Bebas Neue</option>
+            <option value="Georgia">Georgia (serifada)</option>
+            <option value="Courier New">Courier New (mono)</option>
+          </select>
+        </div>
+
+        <div id="manchetePainel" class="manchete-painel" style="display:none;">
+          <p class="field-label">Palavras em destaque (Manchete)</p>
+          <div class="stepper">
+            <button id="manchMenos">-</button>
+            <span id="manchQtd">2</span>
+            <button id="manchMais">+</button>
+          </div>
+          <label class="checkbox-row">
+            <input type="checkbox" id="manchSom" checked />
+            Tocar clique de mouse no destaque
+          </label>
+        </div>
+
+        <div class="preview-box" id="legendaPreview">
+          <span id="legendaPreviewTexto">exemplo de legenda</span>
+        </div>
+
+        <button id="btnGerarLegendas" class="btn-primary">Gerar legendas automáticas</button>
+        <div id="legendasStatus" class="status-box"></div>
+      </section>
+
+      <!-- ABA SFX -->
+      <section id="tab-sfx" class="tab-pane">
+        <p class="field-label">Biblioteca de efeitos</p>
+        <div id="sfxList" class="sfx-list"></div>
+        <div id="sfxStatus" class="status-box"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/dev-mock.js"></script>
+  <script src="js/premiere-bridge.js"></script>
+  <script src="js/respiros.js"></script>
+  <script src="js/volume.js"></script>
+  <script src="js/legendas.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
