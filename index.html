@@ -1,68 +1,65 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<html lang="pt-BR"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lex Alfa</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div id="app">
     <header class="app-header">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">LA</span><h1>Lex Alfa <span class="version">2.0</span></h1></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">L</span><h1>Lex Alfa <span class="version">2.1</span></h1></div>
       <div id="engineIndicator" class="engine-indicator" data-state="idle"><span class="engine-dot" aria-hidden="true"></span><span id="engineLabel">Desconectado</span></div>
     </header>
     <div class="environment-line">
       <span class="dev-badge" id="devBadge" style="display:none;">modo teste local</span>
       <button id="checkProcessor" class="text-button">Reconectar</button>
     </div>
-    <section id="engineSetup" class="setup-card" aria-label="Ativação">
-      <p class="setup-title">Seu estúdio de edição, aqui.</p>
+
+
+
+    <div class="workspace"><nav class="tabs" role="tablist" aria-label="Ferramentas" aria-orientation="vertical">
+      <button id="nav-biblioteca" class="tab-btn" data-tab="biblioteca" role="tab" aria-controls="tab-biblioteca"><img src="icons/navigation/biblioteca.svg" width="22" height="22" alt=""><span>Biblioteca</span></button>
+      <button id="nav-respiros" class="tab-btn active" data-tab="respiros" role="tab" aria-controls="tab-respiros"><img src="icons/navigation/respiros.svg" width="22" height="22" alt=""><span>Cortes</span></button>
+      <button id="nav-volume" class="tab-btn" data-tab="volume" role="tab" aria-controls="tab-volume"><img src="icons/navigation/volume.svg" width="22" height="22" alt=""><span>Volume</span></button>
+      <button id="nav-legendas" class="tab-btn" data-tab="legendas" role="tab" aria-controls="tab-legendas"><img src="icons/navigation/legendas.svg" width="22" height="22" alt=""><span>Legendas</span></button>
+      <button id="nav-sfx" class="tab-btn" data-tab="sfx" role="tab" aria-controls="tab-sfx"><img src="icons/navigation/sfx.svg" width="22" height="22" alt=""><span>Sons</span></button>
+    </nav><div class="workspace-body"><section id="engineSetup" class="setup-card" aria-label="Ativação">
+      <p class="setup-title">Prepare seu espaço de edição</p>
       <p id="engineMessage" class="hint">Ative o processamento local para usar todas as ferramentas.</p>
       <button id="activateEngine" class="btn-primary">Ativar Lex Alfa</button>
-      <label class="checkbox-row"><input id="autoConnect" type="checkbox" checked /> Conectar ao abrir o painel</label>
+      <label class="checkbox-row"><input id="autoConnect" type="checkbox" checked=""> Conectar ao abrir o painel</label>
       <p class="hint">Na primeira vez, o Adobe pede permissão para iniciar o Lex Alfa. Nenhum terminal será aberto.</p>
-    </section>
-    <section id="sourceCard" class="source-card" aria-label="Arquivo de trabalho">
+    </section><section id="sourceCard" class="source-card" aria-label="Arquivo de trabalho">
       <p class="field-label">ARQUIVO DE TRABALHO</p>
       <p id="sourceName" class="source-name">Nenhum arquivo selecionado</p>
-      <div class="actions"><button id="chooseSource" data-operation>Escolher arquivo</button><button id="selectedSource" data-operation>Usar seleção da timeline</button></div>
+      <div class="actions"><button id="chooseSource" data-operation="">Escolher arquivo</button><button id="selectedSource" data-operation="">Usar seleção da timeline</button></div>
       <p id="sourceHint" class="hint">Escolha um arquivo ou use o clipe selecionado na timeline.</p>
-    </section>
-
-    <nav class="tabs" role="tablist" aria-label="Ferramentas">
-      <button id="nav-biblioteca" class="tab-btn" data-tab="biblioteca" role="tab" aria-controls="tab-biblioteca">Biblioteca</button>
-      <button id="nav-respiros" class="tab-btn active" data-tab="respiros" role="tab" aria-controls="tab-respiros">Respiros</button>
-      <button id="nav-volume" class="tab-btn" data-tab="volume" role="tab" aria-controls="tab-volume">Volume</button>
-      <button id="nav-legendas" class="tab-btn" data-tab="legendas" role="tab" aria-controls="tab-legendas">Legendas</button>
-      <button id="nav-sfx" class="tab-btn" data-tab="sfx" role="tab" aria-controls="tab-sfx">Sons</button>
-    </nav>
-
-    <main class="tab-content">
-      <section id="tab-biblioteca" class="tab-pane" role="tabpanel" aria-labelledby="nav-biblioteca">
+    </section><main class="tab-content">
+      <section id="tab-biblioteca" class="tab-pane" role="tabpanel" aria-labelledby="nav-biblioteca"><div class="section-heading"><p class="section-eyebrow">BIBLIOTECA</p><h2>Seus arquivos, por perto.</h2><p>Músicas, efeitos e imagens das suas pastas.</p></div>
         <p class="intro">Músicas, efeitos, overlays e templates MOGRT, reunidos no Premiere.</p>
         <div class="actions">
-          <button id="addLibraryFolder" data-operation class="btn-primary">Adicionar pasta</button>
-          <button id="refreshLibrary" data-operation>Atualizar arquivos</button>
-          <button id="addBundledOverlays" data-operation>Adicionar 4 overlays incluídos</button>
-          <button id="cancelScan" disabled>Interromper busca</button>
+          <button id="addLibraryFolder" data-operation="" class="btn-primary">Adicionar pasta</button>
+          <button id="refreshLibrary" data-operation="">Atualizar arquivos</button>
+          <button id="addBundledOverlays" data-operation="">Adicionar 4 overlays incluídos</button>
+          <button id="cancelScan" disabled="">Interromper busca</button>
         </div>
-        <input id="browserFolder" type="file" webkitdirectory multiple style="display:none;" />
-        <label class="checkbox-row"><input id="libraryRecursive" type="checkbox" checked data-persist /> Incluir subpastas</label>
+        <input id="browserFolder" type="file" webkitdirectory="" multiple="" style="display:none;">
+        <label class="checkbox-row"><input id="libraryRecursive" type="checkbox" checked="" data-persist=""> Incluir subpastas</label>
         <div id="libraryFolders"></div>
         <label class="field-label" for="librarySearch">Buscar por nome ou pasta</label>
-        <input id="librarySearch" type="text" placeholder="Ex.: suspense, piano, whoosh..." />
-        <div class="row-between"><label for="libraryKind">Tipo</label><select id="libraryKind" data-persist><option value="">Todos</option><option value="audio">Áudios</option><option value="mogrt">MOGRT</option><option value="video">Vídeos / overlays</option><option value="image">Imagens / texturas</option></select></div>
+        <input id="librarySearch" type="text" placeholder="Ex.: suspense, piano, whoosh...">
+        <div class="row-between"><label for="libraryKind">Tipo</label><select id="libraryKind" data-persist=""><option value="">Todos</option><option value="audio">Áudios</option><option value="mogrt">MOGRT</option><option value="video">Vídeos / overlays</option><option value="image">Imagens / texturas</option></select></div>
         <div class="row-between">
           <label for="libraryFormat">Formato</label>
-          <select id="libraryFormat" data-persist>
+          <select id="libraryFormat" data-persist="">
             <option value="">Todos</option><option value="wav">WAV</option><option value="mp3">MP3</option>
             <option value="m4a">M4A</option><option value="flac">FLAC</option><option value="aiff">AIFF</option>
             <option value="aif">AIF</option><option value="aac">AAC</option><option value="ogg">OGG</option><option value="wma">WMA</option>
             <option value="mogrt">MOGRT</option><option value="mov">MOV</option><option value="mp4">MP4</option><option value="png">PNG</option><option value="jpg">JPG</option>
           </select>
         </div>
-        <label class="checkbox-row"><input id="libraryFavourites" type="checkbox" data-persist /> Somente favoritos</label>
+        <label class="checkbox-row"><input id="libraryFavourites" type="checkbox" data-persist=""> Somente favoritos</label>
         <div class="row-between"><span id="libraryCount" class="hint"></span><button id="stopPreview">Parar prévia</button></div>
         <p class="hint">Adicionar em nova faixa coloca o áudio na posição atual do cursor. Remover uma pasta da lista mantém os arquivos no computador.</p>
         <div id="libraryStatus" class="status-box" role="status" aria-live="polite"></div>
@@ -70,66 +67,66 @@
         <div id="libraryFiles"></div><button id="libraryMore" style="display:none;">Mostrar mais 100</button>
       </section>
       <!-- ABA RESPIROS -->
-      <section id="tab-respiros" class="tab-pane active" role="tabpanel" aria-labelledby="nav-respiros">
+      <section id="tab-respiros" class="tab-pane active" role="tabpanel" aria-labelledby="nav-respiros"><div class="section-heading"><p class="section-eyebrow">CORTES</p><h2>Uma fala mais fluida.</h2><p>Analise as pausas e escolha os intervalos que quer remover.</p></div>
         <p class="intro">Detecte silêncio no arquivo selecionado e gere uma cópia com os intervalos removidos. Áudio e vídeo são cortados juntos quando o arquivo contém vídeo.</p>
         <p class="field-label">Sensibilidade de detecção</p>
-        <input type="range" id="respirosSensibilidade" min="0" max="100" value="55" data-persist aria-label="Sensibilidade" />
+        <input type="range" id="respirosSensibilidade" min="0" max="100" value="55" data-persist="" aria-label="Sensibilidade">
         <div class="row-between">
           <span class="hint">Menos cortes</span>
           <span class="hint">Mais cortes</span>
         </div>
 
         <p class="field-label">Duração mínima do respiro (ms)</p>
-        <input type="number" id="respirosDuracaoMin" value="150" min="30" max="2000" step="10" data-persist aria-label="Duração mínima em milissegundos" />
+        <input type="number" id="respirosDuracaoMin" value="150" min="30" max="2000" step="10" data-persist="" aria-label="Duração mínima em milissegundos">
 
         <label class="checkbox-row">
-          <input type="checkbox" id="respirosPreservarFala" checked data-persist />
+          <input type="checkbox" id="respirosPreservarFala" checked="" data-persist="">
           Manter pausas com 1 segundo ou mais
         </label>
 
-        <button id="btnDetectarRespiros" class="btn-primary" data-operation>Analisar silêncios do arquivo</button>
+        <button id="btnDetectarRespiros" class="btn-primary" data-operation="">Analisar silêncios do arquivo</button>
         <div id="silenceSegments" class="segment-list"></div>
-        <button id="btnCortarRespiros" class="btn-secondary" data-operation>Gerar cópia com os cortes selecionados</button>
+        <button id="btnCortarRespiros" class="btn-secondary" data-operation="">Gerar cópia com os cortes selecionados</button>
 
         <div id="respirosStatus" class="status-box" role="status" aria-live="polite"></div>
       </section>
 
       <!-- ABA VOLUME -->
-      <section id="tab-volume" class="tab-pane" role="tabpanel" aria-labelledby="nav-volume">
+      <section id="tab-volume" class="tab-pane" role="tabpanel" aria-labelledby="nav-volume"><div class="section-heading"><p class="section-eyebrow">VOLUME</p><h2>Voz no nível certo.</h2><p>Nivele o áudio e controle os picos do arquivo.</p></div>
         <p class="intro">Normalização EBU R128 em duas passagens. Gera um WAV de áudio; use o mesmo alvo em diferentes arquivos para nivelá-los.</p>
         <p class="field-label">Volume alvo (LUFS)</p>
-        <input type="range" id="volumeAlvo" min="-30" max="-6" value="-16" data-persist aria-label="Alvo LUFS" />
+        <input type="range" id="volumeAlvo" min="-30" max="-6" value="-16" data-persist="" aria-label="Alvo LUFS">
         <span id="volumeAlvoOut" class="value-out">-16 LUFS</span>
 
         <p class="field-label">Teto de pico verdadeiro (dBTP)</p>
-        <input type="range" id="volumeLimitador" min="-6" max="0" value="-1" data-persist aria-label="Teto de pico verdadeiro" />
+        <input type="range" id="volumeLimitador" min="-6" max="0" value="-1" data-persist="" aria-label="Teto de pico verdadeiro">
         <span id="volumeLimitadorOut" class="value-out">-1 dB</span>
 
-        <button id="btnAplicarVolume" class="btn-primary" data-operation>Gerar áudio normalizado</button>
+        <button id="btnAplicarVolume" class="btn-primary" data-operation="">Gerar áudio normalizado</button>
         <div id="volumeStatus" class="status-box" role="status" aria-live="polite"></div>
       </section>
 
       <!-- ABA LEGENDAS -->
-      <section id="tab-legendas" class="tab-pane" role="tabpanel" aria-labelledby="nav-legendas">
+      <section id="tab-legendas" class="tab-pane" role="tabpanel" aria-labelledby="nav-legendas"><div class="section-heading"><p class="section-eyebrow">LEGENDAS</p><h2>Sua voz, em destaque.</h2><p>Transcreva, revise e escolha o estilo das legendas.</p></div>
         <p class="intro">Transcrição local para SRT e, opcionalmente, vídeo transparente com o template escolhido. Use o vídeo em uma faixa acima da imagem no Premiere.</p>
-        <div class="row-between"><label for="captionLanguage">Idioma da fala</label><select id="captionLanguage" data-persist><option value="pt">Português</option><option value="auto">Detectar</option><option value="en">Inglês</option><option value="es">Espanhol</option></select></div>
-        <div class="preview-box" id="legendaPreview"><span id="legendaPreviewTexto">exemplo de legenda</span></div>
+        <div class="row-between"><label for="captionLanguage">Idioma da fala</label><select id="captionLanguage" data-persist=""><option value="pt">Português</option><option value="auto">Detectar</option><option value="en">Inglês</option><option value="es">Espanhol</option></select></div>
+        <button id="btnGerarLegendas" class="btn-primary transcribe-button" data-operation="">Transcrever arquivo</button><button id="reviewTranscript" class="btn-secondary" disabled="">Revisar última transcrição</button><div class="preview-box" id="legendaPreview"><span id="legendaPreviewTexto">exemplo de legenda</span></div>
         <div class="row-between"><p class="field-label">Escolha um estilo</p><span class="count-tag">24 estilos</span></div>
-        <div id="templateGrid" class="template-grid"></div>
-        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionAppearance">Personalizar texto e cor <span aria-hidden="true">+</span></button>
-        <div id="captionAppearance" class="disclosure-content" hidden>
+        <input type="text" id="templateSearch" placeholder="Buscar estilo de legenda…" aria-label="Buscar estilos de legenda"><div id="templateGrid" class="template-grid"></div><p id="templateEmpty" class="hint" hidden="">Nenhum estilo encontrado. Tente outro nome.</p>
+        <button class="disclosure" data-disclosure="" aria-expanded="false" aria-controls="captionAppearance">Personalizar texto e cor <span aria-hidden="true">+</span></button>
+        <div id="captionAppearance" class="disclosure-content" hidden="">
         <div class="row-between">
           <label>Cor de destaque</label>
-          <input type="color" id="legendaCor" value="#EF9F27" data-persist aria-label="Cor de destaque" />
+          <input type="color" id="legendaCor" value="#EF9F27" data-persist="" aria-label="Cor de destaque">
         </div>
         <div class="row-between">
           <label>Tamanho</label>
-          <input type="range" id="legendaTamanho" min="10" max="32" value="14" data-persist aria-label="Tamanho da prévia" />
+          <input type="range" id="legendaTamanho" min="10" max="32" value="14" data-persist="" aria-label="Tamanho da prévia">
           <span id="legendaTamanhoOut" class="value-out">14px</span>
         </div>
         <div class="row-between">
           <label>Fonte</label>
-          <select id="legendaFonte" data-persist aria-label="Fonte">
+          <select id="legendaFonte" data-persist="" aria-label="Fonte">
             <option value="Montserrat">Montserrat</option>
             <option value="Arial">Arial</option>
             <option value="Bebas Neue">Bebas Neue</option>
@@ -145,70 +142,72 @@
             <span id="manchQtd">2</span>
             <button id="manchMais">+</button>
           </div>
-          <label class="checkbox-row"><input id="manchSom" type="checkbox" data-persist /> Gerar trilha de cliques no início de cada destaque (com vídeo transparente)</label>
+          <label class="checkbox-row"><input id="manchSom" type="checkbox" data-persist=""> Gerar trilha de cliques no início de cada destaque (com vídeo transparente)</label>
         </div>
 
         </div>
-        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionComposition">Animação e composição <span aria-hidden="true">+</span></button>
-        <div id="captionComposition" class="tool-card disclosure-content" hidden>
-          <div class="row-between"><label for="captionAnimation">Entrada do texto</label><select id="captionAnimation" data-persist><option value="none">Sem movimento</option><option value="fade">Fade suave</option><option value="zoom">Zoom de entrada</option><option value="slide">Deslizar para cima</option><option value="bounce">Ressalto</option></select></div>
-          <div class="row-between"><label for="captionPosition">Posição</label><select id="captionPosition" data-persist><option value="bottom">Inferior</option><option value="center">Centro</option><option value="top">Superior</option></select></div>
-          <div class="row-between"><label for="captionWordsPerLine">Palavras por linha (0 = automático)</label><input id="captionWordsPerLine" type="number" min="0" max="12" value="0" data-persist /></div>
-          <div class="row-between"><label for="captionMaxLines">Máximo de linhas</label><input id="captionMaxLines" type="number" min="1" max="3" value="2" data-persist /></div>
-          <label class="checkbox-row"><input id="showSafeZone" type="checkbox" checked data-persist /> Mostrar guia de área segura na prévia</label>
-          <div class="row-between"><label for="captionSafeTop">Margem superior (%)</label><input id="captionSafeTop" type="number" min="0" max="35" value="10" data-persist /></div>
-          <div class="row-between"><label for="captionSafeBottom">Margem inferior (%)</label><input id="captionSafeBottom" type="number" min="0" max="35" value="18" data-persist /></div>
-          <div class="row-between"><label for="captionSafeHorizontal">Margens laterais (%)</label><input id="captionSafeHorizontal" type="number" min="0" max="35" value="10" data-persist /></div>
+        <button class="disclosure" data-disclosure="" aria-expanded="false" aria-controls="captionComposition">Animação e composição <span aria-hidden="true">+</span></button>
+        <div id="captionComposition" class="tool-card disclosure-content" hidden="">
+          <div class="row-between"><label for="captionAnimation">Entrada do texto</label><select id="captionAnimation" data-persist=""><option value="none">Sem movimento</option><option value="fade">Fade suave</option><option value="zoom">Zoom de entrada</option><option value="slide">Deslizar para cima</option><option value="bounce">Ressalto</option></select></div>
+          <div class="row-between"><label for="captionPosition">Posição</label><select id="captionPosition" data-persist=""><option value="bottom">Inferior</option><option value="center">Centro</option><option value="top">Superior</option></select></div>
+          <div class="row-between"><label for="captionWordsPerLine">Palavras por linha (0 = automático)</label><input id="captionWordsPerLine" type="number" min="0" max="12" value="0" data-persist=""></div>
+          <div class="row-between"><label for="captionMaxLines">Máximo de linhas</label><input id="captionMaxLines" type="number" min="1" max="3" value="2" data-persist=""></div>
+          <label class="checkbox-row"><input id="showSafeZone" type="checkbox" checked="" data-persist=""> Mostrar guia de área segura na prévia</label>
+          <div class="row-between"><label for="captionSafeTop">Margem superior (%)</label><input id="captionSafeTop" type="number" min="0" max="35" value="10" data-persist=""></div>
+          <div class="row-between"><label for="captionSafeBottom">Margem inferior (%)</label><input id="captionSafeBottom" type="number" min="0" max="35" value="18" data-persist=""></div>
+          <div class="row-between"><label for="captionSafeHorizontal">Margens laterais (%)</label><input id="captionSafeHorizontal" type="number" min="0" max="35" value="10" data-persist=""></div>
           <p class="hint">As margens são personalizáveis; confira a interface da plataforma de destino. Ao dividir uma frase, os tempos dos novos blocos são estimados.</p>
         </div>
-        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionPresets">Meus presets <span aria-hidden="true">+</span></button>
-        <div id="captionPresets" class="disclosure-content" hidden>
+        <button class="disclosure" data-disclosure="" aria-expanded="false" aria-controls="captionPresets">Meus presets <span aria-hidden="true">+</span></button>
+        <div id="captionPresets" class="disclosure-content" hidden="">
         <label class="field-label" for="captionPresetName">Presets pessoais</label>
-        <input id="captionPresetName" type="text" maxlength="60" placeholder="Ex.: Reels da minha marca" />
+        <input id="captionPresetName" type="text" maxlength="60" placeholder="Ex.: Reels da minha marca">
         <select id="captionPresetList" aria-label="Presets salvos"></select>
-        <div class="actions"><button id="saveCaptionPreset">Salvar preset</button><button id="loadCaptionPreset">Carregar preset</button><button id="deleteCaptionPreset" data-operation>Excluir preset</button></div>
+        <div class="actions"><button id="saveCaptionPreset">Salvar preset</button><button id="loadCaptionPreset">Carregar preset</button><button id="deleteCaptionPreset" data-operation="">Excluir preset</button></div>
         </div>
-        <label class="checkbox-row"><input id="captionOverlay" type="checkbox" data-persist /> Gerar também vídeo transparente com este estilo</label>
-        <div class="row-between"><label for="captionLayout">Formato do vídeo</label><select id="captionLayout" data-persist><option value="vertical">Vertical · 1080 × 1920</option><option value="horizontal">Horizontal · 1920 × 1080</option><option value="quadrado">Quadrado · 1080 × 1080</option></select></div>
+        <label class="checkbox-row"><input id="captionOverlay" type="checkbox" data-persist=""> Gerar também vídeo transparente com este estilo</label>
+        <div class="row-between"><label for="captionLayout">Formato do vídeo</label><select id="captionLayout" data-persist=""><option value="vertical">Vertical · 1080 × 1920</option><option value="horizontal">Horizontal · 1920 × 1080</option><option value="quadrado">Quadrado · 1080 × 1080</option></select></div>
         <p class="hint">SRT mantém texto editável, sem estilo. O MOV transparente aplica o visual; pode gerar arquivos grandes. Animações por palavra usam tempos estimados dentro de cada frase. O tamanho é proporcional à largura do vídeo.</p>
-        <button id="btnGerarLegendas" class="btn-primary" data-operation>Transcrever arquivo e gerar SRT</button>
-        <button id="importSrt" class="btn-secondary" data-operation>Importar SRT existente no projeto</button>
-        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="srtEditor">Revisar um SRT existente <span aria-hidden="true">+</span></button>
-        <div id="srtEditor" class="tool-card disclosure-content" hidden>
-          <button id="openSrtEditor" data-operation>Carregar SRT para revisar</button>
-          <input id="browserSrt" type="file" accept=".srt" style="display:none;" />
+
+        <button id="importSrt" class="btn-secondary" data-operation="">Importar SRT existente no projeto</button>
+        <button class="disclosure" data-disclosure="" aria-expanded="false" aria-controls="srtEditor">Revisar um SRT existente <span aria-hidden="true">+</span></button>
+        <div id="srtEditor" class="tool-card disclosure-content" hidden="">
+          <button id="openSrtEditor" data-operation="">Carregar SRT para revisar</button>
+          <input id="browserSrt" type="file" accept=".srt" style="display:none;">
           <textarea id="captionSrtText" rows="7" maxlength="200000" aria-label="Texto SRT editável" placeholder="Cole ou carregue o SRT, revise texto e tempos e gere com o estilo acima."></textarea>
-          <button id="renderSrt" data-operation class="btn-secondary">Gerar a partir deste SRT</button>
+          <button id="renderSrt" data-operation="" class="btn-secondary">Gerar a partir deste SRT</button>
         </div>
         <div id="legendasStatus" class="status-box" role="status" aria-live="polite"></div>
-        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="editAssistant">Assistente de edição <span aria-hidden="true">+</span></button>
-        <div id="editAssistant" class="tool-card disclosure-content" hidden>
+        <button class="disclosure" data-disclosure="" aria-expanded="false" aria-controls="editAssistant">Assistente de edição <span aria-hidden="true">+</span></button>
+        <div id="editAssistant" class="tool-card disclosure-content" hidden="">
           <textarea id="editingBrief" rows="3" maxlength="3000" aria-label="Descrição para sugestões" placeholder="Descreva conteúdo, público, tom e enquadramento. Ex.: apresentação sóbria com pessoa em plano médio."></textarea>
           <p class="hint">Sugerir envia somente esta descrição ao TypeSafe. A sugestão é baseada no texto, sem analisar imagens. A chave fica no processador local.</p>
-          <div class="actions"><button id="suggestEdit" data-operation>Sugerir com IA</button><button id="applySuggestion" data-operation>Usar sugestão no painel</button></div>
+          <div class="actions"><button id="suggestEdit" data-operation="">Sugerir com IA</button><button id="applySuggestion" data-operation="">Usar sugestão no painel</button></div>
           <div class="row-between"><label for="zoomStrength">Zoom central</label><select id="zoomStrength"><option value="none">Sem zoom</option><option value="gentle">Leve · 8%</option><option value="punch">Forte · 15%</option></select></div>
-          <button id="renderZoom" data-operation>Gerar cópia com zoom</button>
+          <button id="renderZoom" data-operation="">Gerar cópia com zoom</button>
           <p class="hint">O zoom é constante no arquivo selecionado. Revise o enquadramento antes de importar.</p>
           <div id="advisorStatus" class="status-box" role="status" aria-live="polite"></div>
         </div>
       </section>
 
       <!-- ABA SFX -->
-      <section id="tab-sfx" class="tab-pane" role="tabpanel" aria-labelledby="nav-sfx">
+      <section id="tab-sfx" class="tab-pane" role="tabpanel" aria-labelledby="nav-sfx"><div class="section-heading"><p class="section-eyebrow">SONS</p><h2>O detalhe que se ouve.</h2><p>Ouça os efeitos e adicione ao seu projeto.</p></div>
         <p class="field-label">Biblioteca de efeitos</p>
         <div id="sfxList" class="sfx-list"></div>
         <button id="stopSfx" class="btn-secondary">Parar prévia</button>
         <p class="hint">Cinco efeitos WAV incluídos. Encontre seus próprios sons na aba Biblioteca.</p>
         <div id="sfxStatus" class="status-box" role="status" aria-live="polite"></div>
       </section>
-    </main>
-    <footer class="processing-panel">
-      <div class="row-between"><p class="field-label">PROCESSAMENTO</p><button id="cancelProcessing" class="text-button" disabled>Cancelar</button></div>
+    </main><footer class="processing-panel">
+      <div class="row-between"><p class="field-label">PROCESSAMENTO</p><button id="cancelProcessing" class="text-button" disabled="">Cancelar</button></div>
       <div id="processorStatus" class="status-box" role="status" aria-live="polite">Ative o Lex Alfa para começar.</div>
       <div id="appStatus" class="status-box" role="status" aria-live="polite"></div>
       <div class="row-between"><p class="field-label">Resultados recentes</p><button id="openOutputs" class="text-button">Abrir pasta</button></div>
       <div id="outputFiles"></div>
-    </footer>
+    </footer></div></div>
+
+
+
   </div>
 
   <script src="js/core.js"></script>
@@ -223,5 +222,6 @@
   <script src="js/sfx.js"></script>
   <script src="js/panel-ui.js"></script>
   <script src="js/main.js"></script>
-</body>
-</html>
+
+
+</body></html>

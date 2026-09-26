@@ -11,6 +11,48 @@ function panel(extra = {}) {
   return dom;
 }
 
+test('transcription opens an editable SRT and reuses it for restyling without a source', async () => {
+  const srt = '1\n00:00:00,000 --> 00:00:02,000\nTeste de legenda\n';
+  const calls = [];
+  const dom = panel({Processor:{run:async (operation, options) => {calls.push({operation, options});return {srt,files:['C:/output/legendas.srt']};},publish:async()=>{}}});
+  const context = dom.getInternalVMContext();
+  vm.runInContext(fs.readFileSync('js/legendas.js','utf8') + '\nLegendasTab.init();', context);
+  vm.runInContext(fs.readFileSync('js/caption-tools.js','utf8') + '\nCaptionTools.init();', context);
+  const d = dom.window.document;
+  dom.window.App.setSource({path:'C:/source.wav',name:'source.wav'});
+  d.getElementById('btnGerarLegendas').click();
+  await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(calls[0].operation,'transcribe');
+  assert.equal(d.getElementById('captionSrtText').value,srt);
+  assert.equal(d.getElementById('reviewTranscript').disabled,false);
+  d.getElementById('reviewTranscript').click();
+  assert.equal(d.getElementById('srtEditor').hidden,false);
+  dom.window.App.setSource(null);
+  d.getElementById('captionSrtText').value=srt.replace('Teste','Texto revisado');
+  d.querySelector('[data-id="neon"]').click();
+  d.getElementById('renderSrt').click();
+  await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(calls[1].operation,'renderSrt');
+  assert.equal(calls[1].options.style.template,'neon');
+  assert.ok(calls[1].options.srt.includes('Texto revisado'));
+  dom.window.close();
+});
+
+test('template search ignores accents and handles empty results without losing selection', () => {
+  const dom=panel();
+  vm.runInContext(fs.readFileSync('js/legendas.js','utf8')+'\nLegendasTab.init();',dom.getInternalVMContext());
+  const d=dom.window.document, search=d.getElementById('templateSearch');
+  search.value='classica';search.dispatchEvent(new dom.window.Event('input'));
+  assert.equal(d.querySelectorAll('.template-card').length,1);
+  assert.equal(d.querySelector('.template-card').dataset.id,'classica');
+  search.value='does not exist';search.dispatchEvent(new dom.window.Event('input'));
+  assert.equal(d.getElementById('templateEmpty').hidden,false);
+  search.value='';search.dispatchEvent(new dom.window.Event('input'));
+  assert.equal(d.querySelectorAll('.template-card').length,24);
+  assert.equal(d.querySelector('.template-card.selected').dataset.id,'caixa-karaoke');
+  dom.window.close();
+});
+
 test('preview preserves the original template style without duplicate style attributes', () => {
   const dom = panel();
   vm.runInContext(fs.readFileSync('js/legendas.js','utf8') + '\nLegendasTab.init();', dom.getInternalVMContext());

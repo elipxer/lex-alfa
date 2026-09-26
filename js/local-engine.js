@@ -50,7 +50,7 @@ const LocalEngine = (() => {
     return value;
   }
   function ready(value) {
-    if(value.version!=='2.0.1')throw new Error('Atualize a instalação do Lex Alfa.');
+    if(value.version!=='2.1.0')throw new Error('Atualize a instalação do Lex Alfa.');
     if(!value.whisper)throw new Error('A instalação está incompleta. Reinstale o pacote Lex Alfa.');
     health=value;report('ready','Pronto para editar');return health;
   }
@@ -58,13 +58,13 @@ const LocalEngine = (() => {
     report('connecting','Conectando ao Lex Alfa…');
     let current;
     try {current=await probe();} catch (_) { /* An offline engine can be launched below. */ }
-    if(current?.version==='2.0.1')return ready(current);
+    if(current?.version==='2.1.0')return ready(current);
     if(!launch) {report('idle','Ative uma vez para começar.');return null;}
     const {uxp,fs}=environment();
     const plugin=await fs.getPluginFolder();
     let executable;
     try {executable=await plugin.getEntry('runtime/LexAlfaEngine.exe');}
-    catch (_) {throw new Error('Instale o arquivo Lex-Alfa-2.0.1-Windows.ccx pelo Creative Cloud para ativar o processamento.');}
+    catch (_) {throw new Error('Instale o arquivo Lex-Alfa-2.1.0-Windows.ccx pelo Creative Cloud para ativar o processamento.');}
     if(current) {
       // Authenticated graceful shutdown refuses to stop an active task.
       await request('/shutdown',{});
@@ -75,7 +75,7 @@ const LocalEngine = (() => {
     if(launched!=='')throw new Error('A ativação não foi concluída. Clique em Ativar e permita a abertura do Lex Alfa no diálogo do Adobe.');
     for(let attempt=0;attempt<30;attempt++) {
       await new Promise(resolve=>setTimeout(resolve,500));
-      try {const value=await probe();if(value.version==='2.0.1')return ready(value);} catch (_) {}
+      try {const value=await probe();if(value.version==='2.1.0')return ready(value);} catch (_) {}
     }
     throw new Error('Não foi possível iniciar o Lex Alfa. Reinstale o pacote ou clique em Reconectar para tentar novamente.');
   }

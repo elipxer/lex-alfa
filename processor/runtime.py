@@ -7,7 +7,7 @@ import time
 import urllib.request
 import urllib.error
 
-VERSION = '2.0.1'
+VERSION = '2.1.0'
 PORT = 47831
 
 

@@ -35,6 +35,12 @@ const LegendasTab = (() => {
   let templateAtual = "caixa-karaoke";
 
   function init() {
+    document.getElementById('templateSearch').addEventListener('input', renderGrid);
+    document.getElementById('reviewTranscript').addEventListener('click', () => {
+      document.getElementById('srtEditor').hidden = false;
+      document.querySelector('[aria-controls="srtEditor"]').setAttribute('aria-expanded', 'true');
+      document.getElementById('captionSrtText').focus();
+    });
     const saved = App.load('captionTemplate', 'caixa-karaoke');
     templateAtual = TEMPLATES.some(t => t.id === saved) ? saved : 'caixa-karaoke';
     document.getElementById('manchetePainel').style.display = templateAtual === 'manchete' ? 'block' : 'none';
@@ -69,7 +75,11 @@ const LegendasTab = (() => {
   function renderGrid() {
     const grid = document.getElementById("templateGrid");
     grid.innerHTML = "";
-    TEMPLATES.forEach((t) => {
+    const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const query = normalize(document.getElementById('templateSearch').value.trim());
+    const matches = TEMPLATES.filter(t => normalize(t.nome).includes(query));
+    document.getElementById('templateEmpty').hidden = matches.length > 0;
+    matches.forEach((t) => {
       const card = document.createElement("button");
       card.type = 'button';
       card.setAttribute('uxp-variant','action');
@@ -147,6 +157,10 @@ const LegendasTab = (() => {
       layout:document.getElementById('captionLayout').value,
       clicks:document.getElementById('manchSom').checked}, 'legendasStatus');
     await Processor.publish(result, 'legendasStatus');
+    if (typeof result.srt === 'string') {
+      document.getElementById('captionSrtText').value = result.srt;
+      document.getElementById('reviewTranscript').disabled = false;
+    }
   }
 
   function applyOptions(preset) {

@@ -12,7 +12,7 @@ function engine({online=false,denied=false}={}) {
   };
   const context=vm.createContext({PremiereBridge:{isPremiere:true},App:{load:()=>false},
     require:name=>name==='os'?{homedir:()=> 'C:\\Users\\Teste Nome',platform:()=> 'win32'}:{storage:{localFileSystem:storage},shell:{openPath:async()=>{launches++;if(!denied)online=true;return denied?'denied':'';}}},
-    fetch:async(url,options)=>{requests.push({url,options});if(!online)throw new TypeError('offline');return {ok:true,json:async()=>({app:'lex-alfa',version:'2.0.1',whisper:true,outputDir:'C:/Exports'})};},
+    fetch:async(url,options)=>{requests.push({url,options});if(!online)throw new TypeError('offline');return {ok:true,json:async()=>({app:'lex-alfa',version:'2.1.0',whisper:true,outputDir:'C:/Exports'})};},
     setTimeout:(fn,delay)=>setTimeout(fn,delay===500?0:delay),clearTimeout,setInterval,clearInterval,window:{addEventListener:()=>{}}
   });
   vm.runInContext(fs.readFileSync('js/local-engine.js','utf8')+'\nglobalThis.engine=LocalEngine;',context);
@@ -22,7 +22,7 @@ function engine({online=false,denied=false}={}) {
 test('one activation launches the bundled engine once for concurrent requests',async()=>{
   const e=engine();const phases=[];e.api.observe(value=>phases.push(value.phase));
   const [a,b]=await Promise.all([e.api.ensure(),e.api.ensure()]);
-  assert.equal(a.version,'2.0.1');assert.equal(b.version,'2.0.1');assert.equal(e.launches,1);
+  assert.equal(a.version,'2.1.0');assert.equal(b.version,'2.1.0');assert.equal(e.launches,1);
   assert.equal(phases.at(-1),'ready');
   assert.ok(e.requests.every(r=>r.options.headers.Authorization==='Bearer '+'x'.repeat(48)));
 });

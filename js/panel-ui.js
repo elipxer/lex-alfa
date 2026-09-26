@@ -35,8 +35,8 @@ const PanelUI = (() => {
     const tabs=Array.from(document.querySelectorAll('.tab-btn'));
     tabs.forEach((button,index)=>button.addEventListener('keydown',event=>{
       let next;
-      if(event.key==='ArrowRight')next=(index+1)%tabs.length;
-      if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;
+      if(event.key==='ArrowRight' || event.key==='ArrowDown')next=(index+1)%tabs.length;
+      if(event.key==='ArrowLeft' || event.key==='ArrowUp')next=(index+tabs.length-1)%tabs.length;
       if(event.key==='Home')next=0;
       if(event.key==='End')next=tabs.length-1;
       if(next!==undefined){event.preventDefault();tabs[next].focus();tabs[next].click();}

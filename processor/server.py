@@ -338,7 +338,7 @@ class Worker:
                 clicks = folder / 'cliques-manchete.wav'
                 write_click_track(cues, ROOT / 'assets' / 'sfx' / 'clique.wav', clicks)
                 files.append(str(clicks))
-        return {'files': files, 'captions': count, 'message': f'{count} legendas geradas. Importe os resultados abaixo; alinhe ao início do arquivo original e revise a transcrição.'}
+        return {'files': files, 'captions': count, 'srt': srt_text(cues), 'message': f'{count} legendas geradas. Importe os resultados abaixo; alinhe ao início do arquivo original e revise a transcrição.'}
 
     def zoom(self,job,data,path,folder):
         zoom = data.get('zoom','gentle')
