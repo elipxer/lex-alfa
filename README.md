@@ -4,7 +4,7 @@ Painel UXP para Premiere Pro 25.6+ com biblioteca de mídia local e processament
 
 ## Usar no Premiere
 
-1. Dê dois cliques em `releases/Lex-Alfa-2.0.1-Windows.ccx` e confirme a instalação local no Creative Cloud.
+1. Dê dois cliques em `releases/Lex-Alfa-2.0.1-Windows.ccx` e confirme a instalação local no Creative Cloud. Se o Windows não abrir o Adobe, baixe o arquivo `Instalar-Lex-Alfa-2.0.1.vbs` da publicação, deixe-o ao lado do `.ccx` e abra o `.vbs` para chamar o instalador da Adobe diretamente.
 2. Abra **Lex Alfa** no menu de plugins do Premiere e clique em **Ativar Lex Alfa**. Aceite a confirmação de abertura do processador incluído; ela pode ser lembrada pelo Adobe.
 3. Python, FFmpeg e o modelo de transcrição já acompanham o instalador. Não há terminal ou instalação separada de dependências. A conexão automática é configurável no painel.
 
