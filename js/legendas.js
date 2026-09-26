@@ -72,6 +72,7 @@ const LegendasTab = (() => {
     TEMPLATES.forEach((t) => {
       const card = document.createElement("button");
       card.type = 'button';
+      card.setAttribute('uxp-variant','action');
       card.setAttribute('aria-label', t.nome);
       card.setAttribute('aria-pressed', String(t.id === templateAtual));
       card.className = "template-card" + (t.id === templateAtual ? " selected" : "");

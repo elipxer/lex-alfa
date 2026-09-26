@@ -58,7 +58,7 @@ const App = (() => {
     return el;
   }
   function button(text, action) {
-    const el = element('button', text); el.type = 'button'; el.addEventListener('click', action); return el;
+    const el = element('button', text); el.type = 'button'; el.setAttribute('uxp-variant','action'); el.addEventListener('click', action); return el;
   }
   return { $, load, save, run, message, number, setSource, getSource, bindPreferences, element, button,
     onSourceChange: fn => listeners.push(fn), get busy() { return busy; } };

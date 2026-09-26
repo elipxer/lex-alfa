@@ -2,26 +2,44 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lex Alfa</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div id="app">
     <header class="app-header">
-      <h1>Lex Alfa</h1>
-      <span class="dev-badge" id="devBadge" style="display:none;">modo teste local</span>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">LA</span><h1>Lex Alfa <span class="version">2.0</span></h1></div>
+      <div id="engineIndicator" class="engine-indicator" data-state="idle"><span class="engine-dot" aria-hidden="true"></span><span id="engineLabel">Desconectado</span></div>
     </header>
+    <div class="environment-line">
+      <span class="dev-badge" id="devBadge" style="display:none;">modo teste local</span>
+      <button id="checkProcessor" class="text-button">Reconectar</button>
+    </div>
+    <section id="engineSetup" class="setup-card" aria-label="Ativação">
+      <p class="setup-title">Seu estúdio de edição, aqui.</p>
+      <p id="engineMessage" class="hint">Ative o processamento local para usar todas as ferramentas.</p>
+      <button id="activateEngine" class="btn-primary">Ativar Lex Alfa</button>
+      <label class="checkbox-row"><input id="autoConnect" type="checkbox" checked /> Conectar ao abrir o painel</label>
+      <p class="hint">Na primeira vez, o Adobe pede permissão para iniciar o Lex Alfa. Nenhum terminal será aberto.</p>
+    </section>
+    <section id="sourceCard" class="source-card" aria-label="Arquivo de trabalho">
+      <p class="field-label">ARQUIVO DE TRABALHO</p>
+      <p id="sourceName" class="source-name">Nenhum arquivo selecionado</p>
+      <div class="actions"><button id="chooseSource" data-operation>Escolher arquivo</button><button id="selectedSource" data-operation>Usar seleção da timeline</button></div>
+      <p id="sourceHint" class="hint">Escolha um arquivo ou use o clipe selecionado na timeline.</p>
+    </section>
 
-    <nav class="tabs" aria-label="Ferramentas">
-      <button class="tab-btn" data-tab="biblioteca">Biblioteca</button>
-      <button class="tab-btn active" data-tab="respiros">Respiros</button>
-      <button class="tab-btn" data-tab="volume">Volume</button>
-      <button class="tab-btn" data-tab="legendas">Legendas</button>
-      <button class="tab-btn" data-tab="sfx">SFX</button>
+    <nav class="tabs" role="tablist" aria-label="Ferramentas">
+      <button id="nav-biblioteca" class="tab-btn" data-tab="biblioteca" role="tab" aria-controls="tab-biblioteca">Biblioteca</button>
+      <button id="nav-respiros" class="tab-btn active" data-tab="respiros" role="tab" aria-controls="tab-respiros">Respiros</button>
+      <button id="nav-volume" class="tab-btn" data-tab="volume" role="tab" aria-controls="tab-volume">Volume</button>
+      <button id="nav-legendas" class="tab-btn" data-tab="legendas" role="tab" aria-controls="tab-legendas">Legendas</button>
+      <button id="nav-sfx" class="tab-btn" data-tab="sfx" role="tab" aria-controls="tab-sfx">Sons</button>
     </nav>
 
     <main class="tab-content">
-      <section id="tab-biblioteca" class="tab-pane">
+      <section id="tab-biblioteca" class="tab-pane" role="tabpanel" aria-labelledby="nav-biblioteca">
         <p class="intro">Músicas, efeitos, overlays e templates MOGRT, reunidos no Premiere.</p>
         <div class="actions">
           <button id="addLibraryFolder" data-operation class="btn-primary">Adicionar pasta</button>
@@ -52,7 +70,7 @@
         <div id="libraryFiles"></div><button id="libraryMore" style="display:none;">Mostrar mais 100</button>
       </section>
       <!-- ABA RESPIROS -->
-      <section id="tab-respiros" class="tab-pane active">
+      <section id="tab-respiros" class="tab-pane active" role="tabpanel" aria-labelledby="nav-respiros">
         <p class="intro">Detecte silêncio no arquivo selecionado e gere uma cópia com os intervalos removidos. Áudio e vídeo são cortados juntos quando o arquivo contém vídeo.</p>
         <p class="field-label">Sensibilidade de detecção</p>
         <input type="range" id="respirosSensibilidade" min="0" max="100" value="55" data-persist aria-label="Sensibilidade" />
@@ -77,7 +95,7 @@
       </section>
 
       <!-- ABA VOLUME -->
-      <section id="tab-volume" class="tab-pane">
+      <section id="tab-volume" class="tab-pane" role="tabpanel" aria-labelledby="nav-volume">
         <p class="intro">Normalização EBU R128 em duas passagens. Gera um WAV de áudio; use o mesmo alvo em diferentes arquivos para nivelá-los.</p>
         <p class="field-label">Volume alvo (LUFS)</p>
         <input type="range" id="volumeAlvo" min="-30" max="-6" value="-16" data-persist aria-label="Alvo LUFS" />
@@ -92,15 +110,14 @@
       </section>
 
       <!-- ABA LEGENDAS -->
-      <section id="tab-legendas" class="tab-pane">
+      <section id="tab-legendas" class="tab-pane" role="tabpanel" aria-labelledby="nav-legendas">
         <p class="intro">Transcrição local para SRT e, opcionalmente, vídeo transparente com o template escolhido. Use o vídeo em uma faixa acima da imagem no Premiere.</p>
         <div class="row-between"><label for="captionLanguage">Idioma da fala</label><select id="captionLanguage" data-persist><option value="pt">Português</option><option value="auto">Detectar</option><option value="en">Inglês</option><option value="es">Espanhol</option></select></div>
-        <p class="field-label">Template</p>
+        <div class="preview-box" id="legendaPreview"><span id="legendaPreviewTexto">exemplo de legenda</span></div>
+        <div class="row-between"><p class="field-label">Escolha um estilo</p><span class="count-tag">24 estilos</span></div>
         <div id="templateGrid" class="template-grid"></div>
-
-        <div class="divider"></div>
-
-        <p class="field-label">Personalizar</p>
+        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionAppearance">Personalizar texto e cor <span aria-hidden="true">+</span></button>
+        <div id="captionAppearance" class="disclosure-content" hidden>
         <div class="row-between">
           <label>Cor de destaque</label>
           <input type="color" id="legendaCor" value="#EF9F27" data-persist aria-label="Cor de destaque" />
@@ -131,8 +148,9 @@
           <label class="checkbox-row"><input id="manchSom" type="checkbox" data-persist /> Gerar trilha de cliques no início de cada destaque (com vídeo transparente)</label>
         </div>
 
-        <div class="tool-card">
-          <p class="field-label">Animação e composição</p>
+        </div>
+        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionComposition">Animação e composição <span aria-hidden="true">+</span></button>
+        <div id="captionComposition" class="tool-card disclosure-content" hidden>
           <div class="row-between"><label for="captionAnimation">Entrada do texto</label><select id="captionAnimation" data-persist><option value="none">Sem movimento</option><option value="fade">Fade suave</option><option value="zoom">Zoom de entrada</option><option value="slide">Deslizar para cima</option><option value="bounce">Ressalto</option></select></div>
           <div class="row-between"><label for="captionPosition">Posição</label><select id="captionPosition" data-persist><option value="bottom">Inferior</option><option value="center">Centro</option><option value="top">Superior</option></select></div>
           <div class="row-between"><label for="captionWordsPerLine">Palavras por linha (0 = automático)</label><input id="captionWordsPerLine" type="number" min="0" max="12" value="0" data-persist /></div>
@@ -143,29 +161,28 @@
           <div class="row-between"><label for="captionSafeHorizontal">Margens laterais (%)</label><input id="captionSafeHorizontal" type="number" min="0" max="35" value="10" data-persist /></div>
           <p class="hint">As margens são personalizáveis; confira a interface da plataforma de destino. Ao dividir uma frase, os tempos dos novos blocos são estimados.</p>
         </div>
-        <div class="preview-box" id="legendaPreview">
-          <span id="legendaPreviewTexto">exemplo de legenda</span>
-        </div>
-
+        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="captionPresets">Meus presets <span aria-hidden="true">+</span></button>
+        <div id="captionPresets" class="disclosure-content" hidden>
         <label class="field-label" for="captionPresetName">Presets pessoais</label>
         <input id="captionPresetName" type="text" maxlength="60" placeholder="Ex.: Reels da minha marca" />
         <select id="captionPresetList" aria-label="Presets salvos"></select>
         <div class="actions"><button id="saveCaptionPreset">Salvar preset</button><button id="loadCaptionPreset">Carregar preset</button><button id="deleteCaptionPreset" data-operation>Excluir preset</button></div>
+        </div>
         <label class="checkbox-row"><input id="captionOverlay" type="checkbox" data-persist /> Gerar também vídeo transparente com este estilo</label>
         <div class="row-between"><label for="captionLayout">Formato do vídeo</label><select id="captionLayout" data-persist><option value="vertical">Vertical · 1080 × 1920</option><option value="horizontal">Horizontal · 1920 × 1080</option><option value="quadrado">Quadrado · 1080 × 1080</option></select></div>
         <p class="hint">SRT mantém texto editável, sem estilo. O MOV transparente aplica o visual; pode gerar arquivos grandes. Animações por palavra usam tempos estimados dentro de cada frase. O tamanho é proporcional à largura do vídeo.</p>
         <button id="btnGerarLegendas" class="btn-primary" data-operation>Transcrever arquivo e gerar SRT</button>
         <button id="importSrt" class="btn-secondary" data-operation>Importar SRT existente no projeto</button>
-        <div class="tool-card">
-          <p class="field-label">Aplicar estilo a um SRT existente</p>
+        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="srtEditor">Revisar um SRT existente <span aria-hidden="true">+</span></button>
+        <div id="srtEditor" class="tool-card disclosure-content" hidden>
           <button id="openSrtEditor" data-operation>Carregar SRT para revisar</button>
           <input id="browserSrt" type="file" accept=".srt" style="display:none;" />
           <textarea id="captionSrtText" rows="7" maxlength="200000" aria-label="Texto SRT editável" placeholder="Cole ou carregue o SRT, revise texto e tempos e gere com o estilo acima."></textarea>
           <button id="renderSrt" data-operation class="btn-secondary">Gerar a partir deste SRT</button>
         </div>
         <div id="legendasStatus" class="status-box" role="status" aria-live="polite"></div>
-        <div class="tool-card">
-          <p class="field-label">Assistente de edição</p>
+        <button class="disclosure" data-disclosure aria-expanded="false" aria-controls="editAssistant">Assistente de edição <span aria-hidden="true">+</span></button>
+        <div id="editAssistant" class="tool-card disclosure-content" hidden>
           <textarea id="editingBrief" rows="3" maxlength="3000" aria-label="Descrição para sugestões" placeholder="Descreva conteúdo, público, tom e enquadramento. Ex.: apresentação sóbria com pessoa em plano médio."></textarea>
           <p class="hint">Sugerir envia somente esta descrição ao TypeSafe. A sugestão é baseada no texto, sem analisar imagens. A chave fica no processador local.</p>
           <div class="actions"><button id="suggestEdit" data-operation>Sugerir com IA</button><button id="applySuggestion" data-operation>Usar sugestão no painel</button></div>
@@ -177,7 +194,7 @@
       </section>
 
       <!-- ABA SFX -->
-      <section id="tab-sfx" class="tab-pane">
+      <section id="tab-sfx" class="tab-pane" role="tabpanel" aria-labelledby="nav-sfx">
         <p class="field-label">Biblioteca de efeitos</p>
         <div id="sfxList" class="sfx-list"></div>
         <button id="stopSfx" class="btn-secondary">Parar prévia</button>
@@ -186,19 +203,17 @@
       </section>
     </main>
     <footer class="processing-panel">
-      <p class="field-label">Arquivo para Respiros, Volume e Legendas</p>
-      <p id="sourceName" class="media-path">Nenhum arquivo selecionado</p>
-      <div class="actions"><button id="chooseSource" data-operation>Escolher arquivo</button><button id="selectedSource" data-operation>Usar origem da seleção</button></div>
-      <p class="hint">Processa o arquivo completo, sem os efeitos e recortes da timeline. Para processar a montagem, exporte-a e selecione o arquivo exportado.</p>
-      <div class="actions"><button id="checkProcessor" data-operation>Verificar processador</button><button id="cancelProcessing" disabled>Cancelar processamento</button></div>
-      <div id="processorStatus" class="status-box" role="status">Processamento: execute Iniciar-LexAlfa.ps1.</div>
+      <div class="row-between"><p class="field-label">PROCESSAMENTO</p><button id="cancelProcessing" class="text-button" disabled>Cancelar</button></div>
+      <div id="processorStatus" class="status-box" role="status" aria-live="polite">Ative o Lex Alfa para começar.</div>
       <div id="appStatus" class="status-box" role="status" aria-live="polite"></div>
+      <div class="row-between"><p class="field-label">Resultados recentes</p><button id="openOutputs" class="text-button">Abrir pasta</button></div>
       <div id="outputFiles"></div>
     </footer>
   </div>
 
   <script src="js/core.js"></script>
   <script src="js/premiere-bridge.js"></script>
+  <script src="js/local-engine.js"></script>
   <script src="js/processor-client.js"></script>
   <script src="js/media-library.js"></script>
   <script src="js/respiros.js"></script>
@@ -206,6 +221,7 @@
   <script src="js/legendas.js"></script>
   <script src="js/caption-tools.js"></script>
   <script src="js/sfx.js"></script>
+  <script src="js/panel-ui.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

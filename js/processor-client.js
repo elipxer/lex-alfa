@@ -1,35 +1,13 @@
 const Processor = (() => {
-  const base = 'http://127.0.0.1:47831';
-  let token = null, activeJob = null;
-  async function connection() {
-    if (token) return;
-    const fs = PremiereBridge.fs;
-    if (!fs) throw new Error('Processamento local disponível no painel do Premiere.');
-    try {
-      const file = await (await fs.getPluginFolder()).getEntry('.runtime/connection.json');
-      const value = JSON.parse(await file.read());
-      if (typeof value.token !== 'string' || value.token.length < 32) throw new Error('Conexão inválida.');
-      token = value.token;
-    } catch (_) { throw new Error('Inicie o processador com Iniciar-LexAlfa.ps1 na pasta do plugin.'); }
-  }
-  async function request(path, body) {
-    await connection();
-    let response;
-    try {
-      response = await fetch(base + path, {method:body === undefined ? 'GET' : 'POST',
-        headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
-        ...(body === undefined ? {} : {body:JSON.stringify(body)})});
-    } catch (_) { token = null; throw new Error('Processador local desconectado. Execute Iniciar-LexAlfa.ps1 e tente novamente.'); }
-    const result = await response.json();
-    if (!response.ok) { if (response.status === 401) token = null; throw new Error(result.error || 'Falha no processador.'); }
-    return result;
-  }
+  let activeJob = null;
+  const request = (path,body) => LocalEngine.request(path,body);
   async function check() {
-    const result = await request('/health');
-    App.message('processorStatus', `FFmpeg conectado · transcrição ${result.whisper ? 'pronta' : 'requer modelo Whisper'}`);
+    const result = await LocalEngine.connect(true);
+    App.message('processorStatus', 'Tudo pronto. Escolha um arquivo e uma ferramenta.');
     return result;
   }
   async function run(operation, options, statusId) {
+    await LocalEngine.ensure();
     const started = await request('/jobs', {operation, ...options});
     activeJob = started.id; App.$('cancelProcessing').disabled = false;
     try {
@@ -52,9 +30,10 @@ const Processor = (() => {
   }
   function renderOutputs(files) {
     const out = App.$('outputFiles'); out.textContent = '';
-    if (files.length) out.appendChild(App.element('p', 'Resultados recentes', 'field-label'));
+    if (!files.length) out.appendChild(App.element('p', 'Os arquivos gerados aparecem aqui, prontos para importar no projeto.', 'hint'));
     files.forEach(path => {
-      const row = App.element('div', undefined, 'output-row'); row.appendChild(App.element('span', path));
+      const row = App.element('div', undefined, 'output-row');
+      const label=App.element('span',path.split(/[\\/]/).pop());label.title=path;row.appendChild(label);
       const button = App.button('Importar no projeto', () => App.run('appStatus', async () => {
         await PremiereBridge.importMedia(path); App.message('appStatus', 'Arquivo importado no projeto.');
       }));

@@ -1,39 +1,99 @@
 {
   "id": "com.lexalfa.panel",
   "name": "Lex Alfa",
-  "version": "1.2.0",
+  "version": "2.0.1",
   "main": "index.html",
   "manifestVersion": 6,
   "requiredPermissions": {
     "network": {
-      "domains": ["http://127.0.0.1:47831"]
+      "domains": [
+        "http://127.0.0.1:47831"
+      ]
     },
-    "localFileSystem": "fullAccess"
+    "localFileSystem": "fullAccess",
+    "launchProcess": {
+      "extensions": [
+        ".exe",
+        ""
+      ]
+    }
   },
   "icons": [
-    { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1], "theme": ["all"] },
-    { "width": 23, "height": 23, "path": "icons/icon@2x.png", "scale": [2], "theme": ["all"] }
-  ],
-  "host": [
     {
-      "app": "premierepro",
-      "minVersion": "25.6.0"
+      "width": 23,
+      "height": 23,
+      "path": "icons/icon.png",
+      "scale": [
+        1
+      ],
+      "theme": [
+        "all"
+      ]
+    },
+    {
+      "width": 23,
+      "height": 23,
+      "path": "icons/icon@2x.png",
+      "scale": [
+        2
+      ],
+      "theme": [
+        "all"
+      ]
     }
   ],
+  "host": {
+    "app": "premierepro",
+    "minVersion": "25.6.0"
+  },
   "entrypoints": [
     {
       "type": "panel",
       "id": "lexalfa.main",
-      "label": { "default": "Lex Alfa" },
+      "label": {
+        "default": "Lex Alfa"
+      },
       "main": "index.html",
       "icons": [
-        { "width": 23, "height": 23, "path": "icons/icon.png", "scale": [1], "theme": ["all"] },
-        { "width": 23, "height": 23, "path": "icons/icon@2x.png", "scale": [2], "theme": ["all"] }
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/icon.png",
+          "scale": [
+            1
+          ],
+          "theme": [
+            "all"
+          ]
+        },
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/icon@2x.png",
+          "scale": [
+            2
+          ],
+          "theme": [
+            "all"
+          ]
+        }
       ],
-      "minimumSize": { "width": 340, "height": 500 },
-      "maximumSize": { "width": 900, "height": 1600 },
-      "preferredDockedSize": { "width": 420, "height": 720 },
-      "preferredFloatingSize": { "width": 420, "height": 720 }
+      "minimumSize": {
+        "width": 340,
+        "height": 500
+      },
+      "maximumSize": {
+        "width": 900,
+        "height": 1600
+      },
+      "preferredDockedSize": {
+        "width": 420,
+        "height": 720
+      },
+      "preferredFloatingSize": {
+        "width": 420,
+        "height": 720
+      }
     }
   ]
 }

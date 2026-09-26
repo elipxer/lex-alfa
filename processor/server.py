@@ -11,6 +11,7 @@ import re
 import secrets
 import shutil
 import subprocess
+import sys
 import threading
 import time
 import uuid
@@ -18,11 +19,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 try:
     from .captions import build_ass, read_cues, write_click_track, prepare_cues, srt_text
     from .edit_advisor import suggest
+    from .runtime import VERSION, PORT, state_directory, bundle_directory, installed_connection, write_connection
 except ImportError:
     from captions import build_ass, read_cues, write_click_track, prepare_cues, srt_text
     from edit_advisor import suggest
+    from runtime import VERSION, PORT, state_directory, bundle_directory, installed_connection, write_connection
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = bundle_directory()
 MEDIA = {'.wav', '.mp3', '.m4a', '.aac', '.aif', '.aiff', '.flac', '.ogg', '.wma', '.mp4', '.mov', '.mkv', '.avi', '.webm'}
 
 
@@ -104,6 +107,7 @@ class Worker:
         self.jobs = {}
         self.lock = threading.Lock()
         self.stopping = False
+        self.last_activity = time.monotonic()
 
     def source(self, data):
         path = Path(data.get('path', '')).expanduser().resolve()
@@ -400,7 +404,8 @@ def handler(worker, token):
                 return self.reply(401, {'error': 'Conexão expirada. Verifique o processador novamente.'})
             try:
                 if self.path == '/health':
-                    return self.reply(200, {'app': 'lex-alfa', 'version': '1.2.0', 'whisper': worker.model.is_file(), 'outputDir': str(worker.output)})
+                    worker.last_activity = time.monotonic()
+                    return self.reply(200, {'app': 'lex-alfa', 'version': VERSION, 'whisper': worker.model.is_file(), 'outputDir': str(worker.output), 'bundled':bool(getattr(sys,'frozen',False))})
                 if re.fullmatch(r'/jobs/[a-f0-9]{32}', self.path):
                     return self.reply(200, worker.public_job(self.path.split('/')[2]))
                 return self.reply(404, {'error': 'Rota inexistente.'})
@@ -418,6 +423,7 @@ def handler(worker, token):
                 if not isinstance(data, dict):
                     raise ValueError('Requisição inválida.')
                 if self.path == '/jobs':
+                    worker.last_activity = time.monotonic()
                     return self.reply(202, {'id': worker.submit(data)})
                 if self.path == '/shutdown':
                     with worker.lock:
@@ -443,18 +449,49 @@ def handler(worker, token):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output-dir', default=str(Path.home() / 'Documents' / 'Lex Alfa' / 'Exports'))
-    parser.add_argument('--model', default=str(ROOT / '.runtime' / 'models' / 'ggml-base.bin'))
+    frozen = bool(getattr(sys,'frozen',False))
+    parser.add_argument('--model', default=str(ROOT / ('models' if frozen else '.runtime/models') / 'ggml-base.bin'))
+    parser.add_argument('--state-dir', default=str(state_directory()))
     args = parser.parse_args()
-    worker = Worker(args.output_dir, args.model)
+    runtime = Path(args.state_dir).resolve()
+    current = installed_connection(runtime)
+    if current:
+        if current.get('version') != VERSION:
+            raise ValueError('Outra versão do Lex Alfa está aberta. Use Reconectar no painel.')
+        return
+    bin_dir = ROOT / 'binaries'
+    worker = Worker(args.output_dir, args.model, str(bin_dir/'ffmpeg.exe') if frozen else None, str(bin_dir/'ffprobe.exe') if frozen else None)
+    worker.output.mkdir(parents=True,exist_ok=True)
+    if frozen and (not Path(worker.ffmpeg).is_file() or not Path(worker.ffprobe).is_file() or not worker.model.is_file()):
+        raise ValueError('A instalação está incompleta. Reinstale o pacote Lex Alfa no Creative Cloud.')
     token = secrets.token_urlsafe(48)
-    server = ThreadingHTTPServer(('127.0.0.1', 47831), handler(worker, token))
-    runtime = ROOT / '.runtime'
-    runtime.mkdir(exist_ok=True)
-    (runtime / 'connection.json').write_text(json.dumps({'token': token, 'pid': os.getpid()}), encoding='utf-8')
-    print('Lex Alfa: processador local disponível em 127.0.0.1:47831.', flush=True)
+    try:
+        server = ThreadingHTTPServer(('127.0.0.1', PORT), handler(worker, token))
+    except OSError:
+        # A second launch may race the first. Never kill another process.
+        if installed_connection(runtime): return
+        raise ValueError('O endereço local está ocupado. Use Reconectar; se persistir, reinicie o computador.') from None
+    write_connection(runtime,token)
+    (runtime/'startup-error.json').unlink(missing_ok=True)
+    if not frozen:
+        write_connection(ROOT/'.runtime',token)  # Compatibility with developer scripts.
+    if sys.stdout:
+        print('Lex Alfa: processador local pronto.',flush=True)
+    def idle_shutdown():
+        while not worker.stopping:
+            time.sleep(30)
+            with worker.lock:
+                active = any(job['state'] in ('queued','running') for job in worker.jobs.values())
+                if time.monotonic()-worker.last_activity > 1200 and not active:
+                    worker.stopping = True
+                    server.shutdown()
+                    return
+    if frozen:
+        threading.Thread(target=idle_shutdown,daemon=True).start()
     try:
         server.serve_forever()
     finally:
+        worker.stopping = True
         server.server_close()
 
 

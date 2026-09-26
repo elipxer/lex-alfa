@@ -1,17 +1,30 @@
-# Lex Alfa 1.2
+# Lex Alfa 2.0.1
 
 Painel UXP para Premiere Pro 25.6+ com biblioteca de mídia local e processamento com FFmpeg/Whisper. HTML, CSS e JavaScript sem etapa de compilação. Nenhuma operação de edição usa resultados simulados.
 
 ## Usar no Premiere
 
-1. Adicione `manifest.json` no UXP Developer Tool e carregue o painel no Premiere.
+1. Dê dois cliques em `releases/Lex-Alfa-2.0.1-Windows.ccx` e confirme a instalação local no Creative Cloud.
+2. Abra **Lex Alfa** no menu de plugins do Premiere e clique em **Ativar Lex Alfa**. Aceite a confirmação de abertura do processador incluído; ela pode ser lembrada pelo Adobe.
+3. Python, FFmpeg e o modelo de transcrição já acompanham o instalador. Não há terminal ou instalação separada de dependências. A conexão automática é configurável no painel.
+
+Instruções curtas: [instalação](docs/INSTALAR.md).
+
+### Biblioteca e edição
+
 2. Na aba **Biblioteca**, clique em **Adicionar pasta** e escolha suas pastas de músicas/efeitos. O painel lembra o acesso entre sessões usando tokens UXP.
-3. Pesquise por nome/pasta, filtre por extensão e marque favoritos. **Pr?via** abre e reproduz no monitor de origem; **Parar prévia** interrompe a reprodução.
+3. Pesquise por nome/pasta, filtre por extensão e marque favoritos. **Prévia** abre no monitor de origem; **Parar prévia** interrompe a reprodução.
 4. **Importar** adiciona ao painel Projeto, reutilizando uma mídia já importada com o mesmo caminho. **Adicionar em nova faixa** adiciona o arquivo no playhead em uma nova faixa de áudio, em uma transação que permite desfazer pelo Premiere.
 
 A biblioteca aceita áudio, vídeo, imagens e MOGRT; os formatos estão detalhados abaixo e a decodificação depende do Premiere. Inclui busca em subpastas, cancelamento da busca, paginação de 100 resultados, deduplicação por caminho e limite de 10.000 arquivos por atualização. Remover uma pasta da lista não remove arquivos. Pastas movidas, desconectadas ou com tokens inválidos devem ser adicionadas novamente.
 
-## Processador local
+## Recursos
+
+### Instalação e interface da versão 2.0.1
+
+Pacote CCX offline para Windows x64. O executável incluído roda sem console; toda a operação fica no painel UXP acoplável. A interface usa seleção de arquivo no topo, estado de conexão, ativação/reconexão, resultados com nomes curtos e pasta de exportação acessível. Opções avançadas de legenda ficam em grupos expansíveis; abas têm navegação por teclado e animações respeitam a preferência de movimento reduzido.
+
+Conexão autenticada em loopback; token e estado ficam em `~/AppData/Local/LexAlfa`, separados dos arquivos instalados. O processador encerra após 20 minutos sem painel conectado e sem tarefas. O aplicativo não adiciona inicialização automática ao Windows. A confirmação nativa de abertura do Adobe permanece.
 
 ### Novidades da versão 1.2
 
@@ -24,7 +37,9 @@ A biblioteca aceita áudio, vídeo, imagens e MOGRT; os formatos estão detalhad
 
 Veja a [comparação funcional](docs/REFERENCIA-FUNCIONAL.md). Recursos nativos de MOGRT e biblioteca precisam de validação no Premiere real; os testes de adaptador usam objetos controlados.
 
-Requer **Python 3** e **FFmpeg/ffprobe** no PATH. A transcrição requer uma distribuição do FFmpeg com o filtro `whisper`. O FFmpeg 8.1.1 encontrado neste computador tem esse filtro.
+### Executar a partir do código (desenvolvimento)
+
+Estas instruções são apenas para desenvolver sem o instalador. Requerem **Python 3** e **FFmpeg/ffprobe** no PATH. O usuário do CCX não precisa executar estes comandos. A transcrição requer FFmpeg com o filtro `whisper`.
 
 ```powershell
 # Na pasta do projeto, inicia o processador em segundo plano, sem abrir janela:
@@ -39,7 +54,7 @@ python processor/setup_model.py
 
 O modelo já foi instalado em `.runtime/models/` durante o desenvolvimento neste computador. Essa pasta é local e não entra no versionamento. Em outra instalação, execute o instalador novamente. O download verifica SHA-256 contra os metadados LFS do publicador. Depois do download, transcrição e processamento funcionam localmente, sem enviar mídia ou transcrição para serviços externos. O botão opcional de sugestões por IA envia somente a descrição digitada ao TypeSafe.
 
-No rodapé do painel, clique em **Verificar processador**. Escolha um arquivo com **Escolher arquivo**, **Usar origem da seleção** ou **Processar** na biblioteca.
+Escolha um arquivo com **Escolher arquivo**, **Usar seleção da timeline** ou **Processar** na biblioteca. **Reconectar** recupera a conexão com o processador.
 
 **O processamento usa o arquivo de origem completo, não o trecho cortado, os efeitos ou a montagem da timeline.** Para processar uma montagem, exporte-a do Premiere e selecione o arquivo exportado.
 
@@ -56,7 +71,7 @@ Para mudar a pasta de saída, pare a instância atual e inicie manualmente:
 python processor/server.py --output-dir "D:\Edicao\Lex Alfa"
 ```
 
-O serviço escuta apenas `127.0.0.1:47831`, exige token para todas as operações e recebe apenas comandos fixos de processamento. O token de conexão fica em `.runtime/connection.json`, não em código versionado. O manifesto permite apenas esse endereço de rede. Mantenha `.runtime` privada; não publique a pasta inteira por um servidor web. Não há dependência nem credencial de IA externa no plugin.
+O serviço escuta apenas `127.0.0.1:47831`, exige token para todas as operações e recebe apenas comandos fixos de processamento. O token fica em `~/AppData/Local/LexAlfa`, separado da instalação; no modo de desenvolvimento, usa `.runtime/connection.json`. O manifesto permite apenas esse endereço de rede. Não publique a pasta `.runtime` por um servidor web.
 
 ## Templates e limites atuais
 
@@ -96,6 +111,8 @@ python -m unittest discover -s tests -p 'test_*.py'
 ```
 
 JavaScript usa `jsdom` apenas nos testes; o plugin não precisa de `node_modules`. Python usa a biblioteca padrão; Pillow é necessário apenas para regenerar os ícones com `scripts/build_assets.py`, não para executar o processador.
+
+Para gerar o CCX em Windows x64, instale PyInstaller no ambiente de build e execute `python scripts/package_windows.py --ffmpeg-dir CAMINHO_DA_PASTA_BIN`. O script verifica o modelo, empacota o interpretador sem console, inclui binários/modelo/licenças, valida o ZIP e gera o SHA-256. Usa uma lista explícita de arquivos; `.runtime`, credenciais e mídia do usuário não entram no CCX. Licenças e referências de código de terceiros ficam em `licenses/`. Não inclui assinatura Authenticode do executável.
 
 Validação realizada: testes automatizados do DOM, falhas e concorrência, adapter do Premiere com objetos de teste, processamento FFmpeg de áudio/vídeo real, preservação do original, rejeição de análise desatualizada, autenticação HTTP, transcrição de voz sintetizada, transparência do MOV e sincronização da trilha de cliques. **Carregamento UXP, reprodução no monitor e inserção na timeline ainda precisam de teste dentro do Premiere**, que não estava aberto no ambiente de desenvolvimento.
 

@@ -1,0 +1,19 @@
+Lex Alfa bundles a local Python runtime, FFmpeg and the Whisper base model.
+
+FFmpeg 8.1.1 full build by Gyan: https://www.gyan.dev/ffmpeg/builds/
+Build configuration and component information: FFmpeg-build.txt
+License: FFmpeg-GPL.txt
+Source archive: https://ffmpeg.org/releases/ffmpeg-8.1.1.tar.xz
+Build configuration and patches: https://github.com/m-ab-s/media-autobuild_suite
+
+Whisper / whisper.cpp model: https://huggingface.co/ggerganov/whisper.cpp
+Model SHA-256 is pinned by the build script.
+Code: https://github.com/ggml-org/whisper.cpp
+Model: ggml-base.bin, multilingual base
+License: MIT (Whisper-MIT.txt)
+
+Python: https://www.python.org/ (Python-LICENSE.txt)
+PyInstaller: https://pyinstaller.org/ (GPL with bootloader distribution exception)
+The package is built from this repository with scripts/package_windows.py.
+
+No TypeSafe credentials, local connection tokens, user media or personal libraries are included.

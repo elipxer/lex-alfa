@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   App.bindPreferences();
   const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
   function select(id) {
-    tabButtons.forEach(btn => { const active = btn.dataset.tab === id; btn.classList.toggle('active', active); btn.setAttribute('aria-selected', String(active)); });
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === `tab-${id}`));
+    tabButtons.forEach(btn => { const active = btn.dataset.tab === id; btn.classList.toggle('active', active); btn.setAttribute('aria-selected', String(active));btn.tabIndex=active?0:-1; });
+    document.querySelectorAll('.tab-pane').forEach(p => {const active=p.id===`tab-${id}`;p.classList.toggle('active',active);p.hidden=!active;});
     App.save('activeTab', id);
   }
   tabButtons.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.tab)));
@@ -21,5 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { tab.init(); } catch (e) { App.message('appStatus', `Erro ao iniciar painel: ${e.message}`, true); }
   });
   Processor.restoreOutputs();
+  PanelUI.init();
   await MediaLibrary.init();
 });
