@@ -168,7 +168,7 @@ const MediaLibrary = (() => {
         const result = await PremiereBridge.insertAudio(file.path || '');
         App.message('libraryStatus', `${file.name} adicionado na faixa A${result.track}, em ${result.seconds.toFixed(2)} s.`);
       });
-      if (category === 'audio' || category === 'video') action('Processar', async () => { if (!file.path) throw new Error('Abra o painel no Premiere para processar arquivos.'); App.setSource(file); App.message('libraryStatus', 'Arquivo selecionado. Abra Respiros, Volume ou Legendas.'); });
+      if (category === 'audio' || category === 'video') action('Processar', async () => { if (!file.path) throw new Error('Abra o painel no Premiere para processar arquivos.'); App.setSource(file); App.message('libraryStatus', 'Arquivo selecionado. Abra Cortes, Volume ou Legendas.'); App.message('appStatus', `${file.name} selecionado. Abra Cortes, Volume ou Legendas.`); });
       row.appendChild(actions); list.appendChild(row);
     });
     App.$('libraryMore').style.display = result.length > visibleLimit ? 'block' : 'none';

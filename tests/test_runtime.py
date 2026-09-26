@@ -26,7 +26,7 @@ class RuntimeTests(unittest.TestCase):
             try:
                 with patch('processor.runtime.PORT',server.server_port):
                     write_connection(folder,'right-token')
-                    self.assertEqual(installed_connection(folder)['version'],'2.1.0')
+                    self.assertEqual(installed_connection(folder)['version'],'2.1.1')
                     write_connection(folder,'wrong-token')
                     self.assertIsNone(installed_connection(folder))
             finally:

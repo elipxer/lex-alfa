@@ -17,12 +17,14 @@ const App = (() => {
   async function run(statusId, task) {
     if (busy) { message(statusId, 'Aguarde a operação em andamento.'); return; }
     busy = true;
+    message('appStatus','');
+    document.querySelector('.workspace-body')?.setAttribute('aria-busy','true');
     const controls = Array.from(document.querySelectorAll('[data-operation], #tab-respiros input, #tab-volume input, #tab-legendas input, #tab-legendas textarea, #tab-legendas select, #tab-legendas .template-card, #saveCaptionPreset, #loadCaptionPreset, #manchMenos, #manchMais, #libraryRecursive'));
     const previous = controls.map(el => el.disabled);
     controls.forEach(el => { el.disabled = true; });
     try { return await task(); }
-    catch (error) { message(statusId, error.message || String(error), true); }
-    finally { controls.forEach((el, i) => { el.disabled = previous[i]; }); busy = false; }
+    catch (error) { const text=error.message || String(error);message(statusId,text,true);if(statusId!=='appStatus' && $('processorStatus')?.textContent!==text)message('appStatus',text,true); }
+    finally { controls.forEach((el, i) => { el.disabled = previous[i]; }); busy = false;document.querySelector('.workspace-body')?.setAttribute('aria-busy','false'); }
   }
   function number(id, min, max) {
     const raw = $(id).value, value = Number(raw);
@@ -31,7 +33,8 @@ const App = (() => {
   }
   function setSource(value) {
     source = value;
-    $('sourceName').textContent = value ? `${value.name} — arquivo completo` : 'Nenhum arquivo selecionado';
+    $('sourceName').textContent = value ? value.name : 'Nenhum arquivo selecionado';
+    $('sourceName').title = value?.path || '';
     listeners.forEach(fn => fn(value));
   }
   function getSource() {

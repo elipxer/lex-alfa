@@ -50,6 +50,31 @@ test('template search ignores accents and handles empty results without losing s
   search.value='';search.dispatchEvent(new dom.window.Event('input'));
   assert.equal(d.querySelectorAll('.template-card').length,24);
   assert.equal(d.querySelector('.template-card.selected').dataset.id,'caixa-karaoke');
+  const neon=d.querySelector('[data-id="neon"]');neon.focus();neon.click();
+  assert.equal(d.activeElement.dataset.id,'neon');
+  assert.equal(d.getElementById('captionLayoutRow').hidden,true);
+  d.getElementById('captionOverlay').checked=true;
+  d.getElementById('captionOverlay').dispatchEvent(new dom.window.Event('change'));
+  assert.equal(d.getElementById('captionLayoutRow').hidden,false);
+  assert.ok(d.getElementById('btnGerarLegendas').textContent.includes('vídeo'));
+  dom.window.close();
+});
+
+test('processor exposes completion, results and failures in the persistent status area', async () => {
+  let fail=false;
+  const dom=panel({LocalEngine:{ensure:async()=>{if(fail)throw new Error('Falha de conexão');},request:async route=>route==='/jobs'?{id:'job'}:{state:'done',result:{files:['C:/Exports/test/legendas.srt']}}}});
+  const context=dom.getInternalVMContext();
+  vm.runInContext(fs.readFileSync('js/processor-client.js','utf8')+'\nwindow.processor=Processor;',context);
+  const api=dom.window.processor,d=dom.window.document;
+  const result=await api.run('transcribe',{},'legendasStatus');await api.publish(result,'legendasStatus');
+  assert.equal(d.getElementById('cancelProcessing').disabled,true);
+  assert.equal(d.getElementById('showResults').textContent,'Resultados (1)');
+  assert.ok(d.getElementById('processorStatus').textContent.includes('pronto'));
+  assert.ok(d.querySelector('#tab-resultados #outputFiles').textContent.includes('legendas.srt'));
+  fail=true;
+  await assert.rejects(api.run('transcribe',{},'legendasStatus'),/conexão/);
+  assert.equal(d.getElementById('processorStatus').classList.contains('error'),true);
+  assert.equal(d.getElementById('cancelProcessing').disabled,true);
   dom.window.close();
 });
 

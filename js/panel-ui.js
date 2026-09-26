@@ -9,6 +9,7 @@ const PanelUI = (() => {
       button.addEventListener('click',()=>{
         const open=button.getAttribute('aria-expanded')!=='true';
         button.setAttribute('aria-expanded',String(open));region.hidden=!open;
+        const icon=button.querySelector('[aria-hidden]');if(icon)icon.textContent=open?'−':'+';
       });
     });
     LocalEngine.observe(({phase,message})=>{
@@ -20,7 +21,7 @@ const PanelUI = (() => {
       App.$('activateEngine').textContent=connecting?'Preparando…':phase==='error'?'Tentar novamente':'Ativar Lex Alfa';
       App.$('activateEngine').disabled=connecting || phase==='preview';
       App.$('checkProcessor').disabled=connecting || phase==='preview';
-      App.$('processorStatus').textContent=message;
+      if(!App.busy)App.$('processorStatus').textContent=message;
     });
     App.$('activateEngine').addEventListener('click',()=>App.run('processorStatus',async()=>{
       await LocalEngine.connect(true);App.save('autoConnect',App.$('autoConnect').checked);
@@ -30,7 +31,7 @@ const PanelUI = (() => {
     App.$('openOutputs').addEventListener('click',()=>App.run('appStatus',LocalEngine.openOutputs));
     App.onSourceChange(value=>{
       App.$('sourceCard').classList.toggle('has-source',!!value);
-      App.$('sourceHint').textContent=value?'O processamento usa o arquivo completo. Seus originais são preservados.':'Escolha um arquivo ou use o clipe selecionado na timeline.';
+      App.$('sourceHint').textContent=value?'Usa o arquivo inteiro, incluindo trechos fora do corte da timeline. Seus originais são preservados.':'Escolha um arquivo ou use o arquivo do clipe selecionado na timeline.';
     });
     const tabs=Array.from(document.querySelectorAll('.tab-btn'));
     tabs.forEach((button,index)=>button.addEventListener('keydown',event=>{

@@ -12,7 +12,7 @@ function engine({online=false,denied=false}={}) {
   };
   const context=vm.createContext({PremiereBridge:{isPremiere:true},App:{load:()=>false},
     require:name=>name==='os'?{homedir:()=> 'C:\\Users\\Teste Nome',platform:()=> 'win32'}:{storage:{localFileSystem:storage},shell:{openPath:async()=>{launches++;if(!denied)online=true;return denied?'denied':'';}}},
-    fetch:async(url,options)=>{requests.push({url,options});if(!online)throw new TypeError('offline');return {ok:true,json:async()=>({app:'lex-alfa',version:'2.1.0',whisper:true,outputDir:'C:/Exports'})};},
+    fetch:async(url,options)=>{requests.push({url,options});if(!online)throw new TypeError('offline');return {ok:true,json:async()=>({app:'lex-alfa',version:'2.1.1',whisper:true,outputDir:'C:/Exports'})};},
     setTimeout:(fn,delay)=>setTimeout(fn,delay===500?0:delay),clearTimeout,setInterval,clearInterval,window:{addEventListener:()=>{}}
   });
   vm.runInContext(fs.readFileSync('js/local-engine.js','utf8')+'\nglobalThis.engine=LocalEngine;',context);
@@ -22,7 +22,7 @@ function engine({online=false,denied=false}={}) {
 test('one activation launches the bundled engine once for concurrent requests',async()=>{
   const e=engine();const phases=[];e.api.observe(value=>phases.push(value.phase));
   const [a,b]=await Promise.all([e.api.ensure(),e.api.ensure()]);
-  assert.equal(a.version,'2.1.0');assert.equal(b.version,'2.1.0');assert.equal(e.launches,1);
+  assert.equal(a.version,'2.1.1');assert.equal(b.version,'2.1.1');assert.equal(e.launches,1);
   assert.equal(phases.at(-1),'ready');
   assert.ok(e.requests.every(r=>r.options.headers.Authorization==='Bearer '+'x'.repeat(48)));
 });
@@ -50,5 +50,14 @@ test('panel starts with collapsed advanced controls and preserves keyboard navig
   assert.equal(d.getElementById('activateEngine').disabled,true);
   assert.equal(d.querySelectorAll('#legendaPreview').length,1);
   assert.equal(d.querySelector('#tab-legendas #captionAppearance #legendaFonte')?.id,'legendaFonte');
+  d.getElementById('nav-biblioteca').click();
+  assert.equal(d.getElementById('sourceCard').hidden,true);
+  d.getElementById('nav-volume').click();
+  assert.equal(d.getElementById('sourceCard').hidden,false);
+  d.getElementById('showResults').click();
+  assert.equal(d.getElementById('tab-resultados').hidden,false);
+  assert.equal(d.getElementById('sourceCard').hidden,true);
+  assert.equal(d.activeElement.id,'nav-resultados');
+  assert.equal(d.querySelector('.workspace-body .processing-panel'),null);
   dom.window.close();
 });

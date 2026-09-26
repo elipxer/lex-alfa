@@ -35,10 +35,18 @@ const LegendasTab = (() => {
   let templateAtual = "caixa-karaoke";
 
   function init() {
+    function updateOutputChoice() {
+      const overlay=document.getElementById('captionOverlay').checked;
+      document.getElementById('captionLayoutRow').hidden=!overlay;
+      document.getElementById('btnGerarLegendas').textContent=overlay?'Transcrever + gerar vídeo de legendas':'Transcrever e gerar SRT';
+    }
+    document.getElementById('captionOverlay').addEventListener('change',updateOutputChoice);
+    updateOutputChoice();
     document.getElementById('templateSearch').addEventListener('input', renderGrid);
     document.getElementById('reviewTranscript').addEventListener('click', () => {
       document.getElementById('srtEditor').hidden = false;
-      document.querySelector('[aria-controls="srtEditor"]').setAttribute('aria-expanded', 'true');
+      const disclosure=document.querySelector('[aria-controls="srtEditor"]');
+      disclosure.setAttribute('aria-expanded', 'true');disclosure.querySelector('[aria-hidden]').textContent='−';
       document.getElementById('captionSrtText').focus();
     });
     const saved = App.load('captionTemplate', 'caixa-karaoke');
@@ -74,10 +82,12 @@ const LegendasTab = (() => {
 
   function renderGrid() {
     const grid = document.getElementById("templateGrid");
+    const focused=grid.contains(document.activeElement)?document.activeElement.dataset.id:null;
     grid.innerHTML = "";
     const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     const query = normalize(document.getElementById('templateSearch').value.trim());
     const matches = TEMPLATES.filter(t => normalize(t.nome).includes(query));
+    document.getElementById('templateCount').textContent=query?`${matches.length} de ${TEMPLATES.length}`:`${TEMPLATES.length} estilos`;
     document.getElementById('templateEmpty').hidden = matches.length > 0;
     matches.forEach((t) => {
       const card = document.createElement("button");
@@ -92,6 +102,7 @@ const LegendasTab = (() => {
       card.addEventListener("click", () => selecionarTemplate(t.id));
       grid.appendChild(card);
     });
+    if(focused)grid.querySelector(`[data-id="${focused}"]`)?.focus();
   }
 
   function selecionarTemplate(id) {
@@ -114,6 +125,7 @@ const LegendasTab = (() => {
     const tamanho = document.getElementById("legendaTamanho").value;
     const fonte = document.getElementById("legendaFonte").value;
     const t = TEMPLATES.find((x) => x.id === templateAtual);
+    document.getElementById('selectedStyle').textContent=`Estilo selecionado: ${t.nome} · aplicado ao vídeo transparente`;
 
     const container = document.getElementById('legendaPreview');
     container.innerHTML = t.preview(cor);

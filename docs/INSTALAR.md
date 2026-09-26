@@ -1,7 +1,7 @@
-# Lex Alfa 2.1.0 — Windows
+# Lex Alfa 2.1.1 — Windows
 
 1. Tenha o Adobe Creative Cloud e o Premiere Pro 25.6 ou superior instalados.
-2. Dê dois cliques em Lex-Alfa-2.1.0-Windows.ccx. Confirme a instalação local no Creative Cloud. Se o duplo clique não abrir o Adobe, baixe também Instalar-Lex-Alfa-2.1.0.vbs e deixe os dois arquivos na mesma pasta. Dê dois cliques no arquivo .vbs; ele chama o instalador da Adobe diretamente, sem abrir PowerShell ou uma janela de terminal.
+2. Dê dois cliques em Lex-Alfa-2.1.1-Windows.ccx. Confirme a instalação local no Creative Cloud. Se o duplo clique não abrir o Adobe, baixe também Instalar-Lex-Alfa-2.1.1.vbs e deixe os dois arquivos na mesma pasta. Dê dois cliques no arquivo .vbs; ele chama o instalador da Adobe diretamente, sem abrir PowerShell ou uma janela de terminal.
 3. Abra o Premiere. Acesse Janela → Plug-ins UXP → Lex Alfa.
 4. Clique em Ativar Lex Alfa. Na confirmação do Adobe, permita iniciar o processador incluído. A opção de lembrar a decisão evita repetir essa confirmação.
 5. Escolha seu arquivo ou use a seleção da timeline. Abra a ferramenta desejada e processe.
